@@ -1,0 +1,868 @@
+[
+    {
+        "outputFile": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 100,
+                    "endColumn": 52,
+                    "endOffset": 148
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 100,
+                        "endColumn": 52,
+                        "endOffset": 148
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 153,
+                    "endColumn": 50,
+                    "endOffset": 199
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 153,
+                        "endColumn": 50,
+                        "endOffset": 199
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 204,
+                    "endColumn": 51,
+                    "endOffset": 251
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 204,
+                        "endColumn": 51,
+                        "endOffset": 251
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 256,
+                    "endColumn": 58,
+                    "endOffset": 310
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 256,
+                        "endColumn": 58,
+                        "endOffset": 310
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 6,
+                    "startColumn": 4,
+                    "startOffset": 315,
+                    "endColumn": 58,
+                    "endOffset": 369
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 315,
+                        "endColumn": 58,
+                        "endOffset": 369
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "startOffset": 745,
+                    "endColumn": 47,
+                    "endOffset": 788
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 12,
+                        "startColumn": 4,
+                        "startOffset": 745,
+                        "endColumn": 47,
+                        "endOffset": 788
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 13,
+                    "startColumn": 4,
+                    "startOffset": 793,
+                    "endColumn": 36,
+                    "endOffset": 825
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 13,
+                        "startColumn": 4,
+                        "startOffset": 793,
+                        "endColumn": 36,
+                        "endOffset": 825
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 14,
+                    "startColumn": 4,
+                    "startOffset": 830,
+                    "endColumn": 36,
+                    "endOffset": 862
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 14,
+                        "startColumn": 4,
+                        "startOffset": 830,
+                        "endColumn": 36,
+                        "endOffset": 862
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 15,
+                    "startColumn": 4,
+                    "startOffset": 867,
+                    "endColumn": 36,
+                    "endOffset": 899
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 15,
+                        "startColumn": 4,
+                        "startOffset": 867,
+                        "endColumn": 36,
+                        "endOffset": 899
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 16,
+                    "startColumn": 4,
+                    "startOffset": 904,
+                    "endColumn": 36,
+                    "endOffset": 936
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 16,
+                        "startColumn": 4,
+                        "startOffset": 904,
+                        "endColumn": 36,
+                        "endOffset": 936
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 17,
+                    "startColumn": 4,
+                    "startOffset": 941,
+                    "endColumn": 36,
+                    "endOffset": 973
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 17,
+                        "startColumn": 4,
+                        "startOffset": 941,
+                        "endColumn": 36,
+                        "endOffset": 973
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 18,
+                    "startColumn": 4,
+                    "startOffset": 978,
+                    "endColumn": 71,
+                    "endOffset": 1045
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 18,
+                        "startColumn": 4,
+                        "startOffset": 978,
+                        "endColumn": 71,
+                        "endOffset": 1045
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 19,
+                    "startColumn": 4,
+                    "startOffset": 1050,
+                    "endColumn": 43,
+                    "endOffset": 1089
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 1050,
+                        "endColumn": 43,
+                        "endOffset": 1089
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 20,
+                    "startColumn": 4,
+                    "startOffset": 1094,
+                    "endColumn": 71,
+                    "endOffset": 1161
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 20,
+                        "startColumn": 4,
+                        "startOffset": 1094,
+                        "endColumn": 71,
+                        "endOffset": 1161
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 21,
+                    "startColumn": 4,
+                    "startOffset": 1166,
+                    "endColumn": 56,
+                    "endOffset": 1218
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 21,
+                        "startColumn": 4,
+                        "startOffset": 1166,
+                        "endColumn": 56,
+                        "endOffset": 1218
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 22,
+                    "startColumn": 4,
+                    "startOffset": 1223,
+                    "endColumn": 51,
+                    "endOffset": 1270
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 22,
+                        "startColumn": 4,
+                        "startOffset": 1223,
+                        "endColumn": 51,
+                        "endOffset": 1270
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 23,
+                    "startColumn": 4,
+                    "startOffset": 1275,
+                    "endColumn": 24,
+                    "endOffset": 1295
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 23,
+                        "startColumn": 4,
+                        "startOffset": 1275,
+                        "endColumn": 24,
+                        "endOffset": 1295
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 24,
+                    "startColumn": 4,
+                    "startOffset": 1300,
+                    "endLine": 29,
+                    "endColumn": 12,
+                    "endOffset": 1598
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 24,
+                        "startColumn": 4,
+                        "startOffset": 1300,
+                        "endLine": 29,
+                        "endColumn": 12,
+                        "endOffset": 1598
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 30,
+                    "startColumn": 4,
+                    "startOffset": 1603,
+                    "endLine": 40,
+                    "endColumn": 12,
+                    "endOffset": 2208
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 30,
+                        "startColumn": 4,
+                        "startOffset": 1603,
+                        "endLine": 40,
+                        "endColumn": 12,
+                        "endOffset": 2208
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 41,
+                    "startColumn": 4,
+                    "startOffset": 2213,
+                    "endLine": 44,
+                    "endColumn": 12,
+                    "endOffset": 2406
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 41,
+                        "startColumn": 4,
+                        "startOffset": 2213,
+                        "endLine": 44,
+                        "endColumn": 12,
+                        "endOffset": 2406
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 45,
+                    "startColumn": 4,
+                    "startOffset": 2411,
+                    "endLine": 48,
+                    "endColumn": 12,
+                    "endOffset": 2598
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 45,
+                        "startColumn": 4,
+                        "startOffset": 2411,
+                        "endLine": 48,
+                        "endColumn": 12,
+                        "endOffset": 2598
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 49,
+                    "startColumn": 4,
+                    "startOffset": 2603,
+                    "endLine": 57,
+                    "endColumn": 12,
+                    "endOffset": 3135
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 49,
+                        "startColumn": 4,
+                        "startOffset": 2603,
+                        "endLine": 57,
+                        "endColumn": 12,
+                        "endOffset": 3135
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "outputFile": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 100,
+                    "endColumn": 52,
+                    "endOffset": 148
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 100,
+                        "endColumn": 52,
+                        "endOffset": 148
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 153,
+                    "endColumn": 50,
+                    "endOffset": 199
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 153,
+                        "endColumn": 50,
+                        "endOffset": 199
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 204,
+                    "endColumn": 51,
+                    "endOffset": 251
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 204,
+                        "endColumn": 51,
+                        "endOffset": 251
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 256,
+                    "endColumn": 58,
+                    "endOffset": 310
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 256,
+                        "endColumn": 58,
+                        "endOffset": 310
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 6,
+                    "startColumn": 4,
+                    "startOffset": 315,
+                    "endColumn": 58,
+                    "endOffset": 369
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 315,
+                        "endColumn": 58,
+                        "endOffset": 369
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "startOffset": 745,
+                    "endColumn": 47,
+                    "endOffset": 788
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 12,
+                        "startColumn": 4,
+                        "startOffset": 745,
+                        "endColumn": 47,
+                        "endOffset": 788
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 13,
+                    "startColumn": 4,
+                    "startOffset": 793,
+                    "endColumn": 36,
+                    "endOffset": 825
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 13,
+                        "startColumn": 4,
+                        "startOffset": 793,
+                        "endColumn": 36,
+                        "endOffset": 825
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 14,
+                    "startColumn": 4,
+                    "startOffset": 830,
+                    "endColumn": 36,
+                    "endOffset": 862
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 14,
+                        "startColumn": 4,
+                        "startOffset": 830,
+                        "endColumn": 36,
+                        "endOffset": 862
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 15,
+                    "startColumn": 4,
+                    "startOffset": 867,
+                    "endColumn": 36,
+                    "endOffset": 899
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 15,
+                        "startColumn": 4,
+                        "startOffset": 867,
+                        "endColumn": 36,
+                        "endOffset": 899
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 16,
+                    "startColumn": 4,
+                    "startOffset": 904,
+                    "endColumn": 36,
+                    "endOffset": 936
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 16,
+                        "startColumn": 4,
+                        "startOffset": 904,
+                        "endColumn": 36,
+                        "endOffset": 936
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 17,
+                    "startColumn": 4,
+                    "startOffset": 941,
+                    "endColumn": 36,
+                    "endOffset": 973
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 17,
+                        "startColumn": 4,
+                        "startOffset": 941,
+                        "endColumn": 36,
+                        "endOffset": 973
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 18,
+                    "startColumn": 4,
+                    "startOffset": 978,
+                    "endColumn": 71,
+                    "endOffset": 1045
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 18,
+                        "startColumn": 4,
+                        "startOffset": 978,
+                        "endColumn": 71,
+                        "endOffset": 1045
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 19,
+                    "startColumn": 4,
+                    "startOffset": 1050,
+                    "endColumn": 43,
+                    "endOffset": 1089
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 1050,
+                        "endColumn": 43,
+                        "endOffset": 1089
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 20,
+                    "startColumn": 4,
+                    "startOffset": 1094,
+                    "endColumn": 71,
+                    "endOffset": 1161
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 20,
+                        "startColumn": 4,
+                        "startOffset": 1094,
+                        "endColumn": 71,
+                        "endOffset": 1161
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 21,
+                    "startColumn": 4,
+                    "startOffset": 1166,
+                    "endColumn": 56,
+                    "endOffset": 1218
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 21,
+                        "startColumn": 4,
+                        "startOffset": 1166,
+                        "endColumn": 56,
+                        "endOffset": 1218
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 22,
+                    "startColumn": 4,
+                    "startOffset": 1223,
+                    "endColumn": 51,
+                    "endOffset": 1270
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 22,
+                        "startColumn": 4,
+                        "startOffset": 1223,
+                        "endColumn": 51,
+                        "endOffset": 1270
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 23,
+                    "startColumn": 4,
+                    "startOffset": 1275,
+                    "endColumn": 24,
+                    "endOffset": 1295
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 23,
+                        "startColumn": 4,
+                        "startOffset": 1275,
+                        "endColumn": 24,
+                        "endOffset": 1295
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 24,
+                    "startColumn": 4,
+                    "startOffset": 1300,
+                    "endLine": 29,
+                    "endColumn": 12,
+                    "endOffset": 1598
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 24,
+                        "startColumn": 4,
+                        "startOffset": 1300,
+                        "endLine": 29,
+                        "endColumn": 12,
+                        "endOffset": 1598
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 30,
+                    "startColumn": 4,
+                    "startOffset": 1603,
+                    "endLine": 40,
+                    "endColumn": 12,
+                    "endOffset": 2208
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 30,
+                        "startColumn": 4,
+                        "startOffset": 1603,
+                        "endLine": 40,
+                        "endColumn": 12,
+                        "endOffset": 2208
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 41,
+                    "startColumn": 4,
+                    "startOffset": 2213,
+                    "endLine": 44,
+                    "endColumn": 12,
+                    "endOffset": 2406
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 41,
+                        "startColumn": 4,
+                        "startOffset": 2213,
+                        "endLine": 44,
+                        "endColumn": 12,
+                        "endOffset": 2406
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 45,
+                    "startColumn": 4,
+                    "startOffset": 2411,
+                    "endLine": 48,
+                    "endColumn": 12,
+                    "endOffset": 2598
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 45,
+                        "startColumn": 4,
+                        "startOffset": 2411,
+                        "endLine": 48,
+                        "endColumn": 12,
+                        "endOffset": 2598
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 49,
+                    "startColumn": 4,
+                    "startOffset": 2603,
+                    "endLine": 57,
+                    "endColumn": 12,
+                    "endOffset": 3135
+                },
+                "from": {
+                    "file": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 49,
+                        "startColumn": 4,
+                        "startOffset": 2603,
+                        "endLine": 57,
+                        "endColumn": 12,
+                        "endOffset": 3135
+                    }
+                }
+            }
+        ]
+    }
+]

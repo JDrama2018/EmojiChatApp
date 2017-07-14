@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\crop__ic_done.png",
+        "source": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\crop__ic_done.png"
+    },
+    {
+        "merged": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\crop__divider.9.png",
+        "source": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\crop__divider.9.png"
+    },
+    {
+        "merged": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\crop__divider.9.png",
+        "source": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\crop__divider.9.png"
+    },
+    {
+        "merged": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\crop__ic_cancel.png",
+        "source": "C:\\Users\\Yagnesh\\Documents\\emojichatandroidapp\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\crop__ic_cancel.png"
+    },
+    {
+        "merged": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\crop__ic_cancel.png",
+        "source": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\crop__ic_cancel.png"
+    },
+    {
+        "merged": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\crop__ic_done.png",
+        "source": "C:\\Users\\Yagnesh\\Documents\\mema\\CropingLib\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\crop__ic_done.png"
+    }
+]

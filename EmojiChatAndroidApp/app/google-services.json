@@ -1,0 +1,125 @@
+{
+  "project_info": {
+    "project_number": "759905974451",
+    "firebase_url": "https://muslim-223b1.firebaseio.com",
+    "project_id": "muslim-223b1",
+    "storage_bucket": "muslim-223b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759905974451:android:b9b2307f9fbf5af6",
+        "android_client_info": {
+          "package_name": "app.mubeen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759905974451-tri6rg42jgm2ee6263rsqtrqaum5b7g5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.mubeen",
+            "certificate_hash": "f8947f479a1d681fb5fb364ba0606ceb60684772"
+          }
+        },
+        {
+          "client_id": "759905974451-622rld4hmq59v35adipgj8g5j8baj0m7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcfEFOxBiX0eY5zj-oGJjpa40Fbl9n8O8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759905974451-2hknpfkfuvs973cmukph9l7c8ganfjif.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dev.wangri.muslimojis",
+                "app_store_id": "1076407343"
+              }
+            },
+            {
+              "client_id": "759905974451-622rld4hmq59v35adipgj8g5j8baj0m7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759905974451:android:f3c452659c70fac9",
+        "android_client_info": {
+          "package_name": "com.dev.wangri.muslimkeyboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759905974451-622rld4hmq59v35adipgj8g5j8baj0m7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcfEFOxBiX0eY5zj-oGJjpa40Fbl9n8O8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759905974451:android:bbe4b42ee59f872d",
+        "android_client_info": {
+          "package_name": "com.dev.cloudstream.muslimkeyboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759905974451-622rld4hmq59v35adipgj8g5j8baj0m7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcfEFOxBiX0eY5zj-oGJjpa40Fbl9n8O8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
