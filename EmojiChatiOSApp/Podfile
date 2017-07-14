@@ -1,0 +1,36 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+use_frameworks! 
+target 'EmijiChat' do
+    
+
+    #platform :ios, '9.0'
+    #use_frameworks!
+    # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
+    
+    pod 'SimpleTabBarController'
+#	pod 'CountryPickerSwift'
+    pod 'Toast-Swift', '~> 2.0.0'
+    pod 'AsyncImageView'
+    
+    pod 'CryptoSwift'
+    pod 'SDWebImage'
+
+#   pod 'SinchVerification', '~> 2.0.2'
+#    pod 'SinchVerification-Swift', '~> 2.0.2'
+
+#    pod 'SinchVerification-Swift', '<2.0.3'
+
+    
+    pod 'Firebase/Database', '<4'
+    pod 'Firebase/Auth', '<4'
+    pod 'Firebase/RemoteConfig', '<4'
+    pod 'Firebase/Messaging', '<4'
+    pod 'FirebaseStorage', '<2'
+    
+    pod 'Firebase/AdMob'
+    
+    # Pods for EmijiChat
+end
+
