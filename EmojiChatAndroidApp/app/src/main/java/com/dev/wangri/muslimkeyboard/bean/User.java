@@ -8,6 +8,7 @@ import java.util.Map;
  */
 
 public class User implements Serializable {
+    private String password;
     public String id;
     public String username;
     public String firstname;
@@ -24,6 +25,27 @@ public class User implements Serializable {
 
     }
 
+    public User(String username, String password) {
+        this.username = username; //Parameterized for Program-Inhouse objects.
+        this.password = password;
+    }
+
+    //Getters and Setters
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 //    public User(String id, String username, String email, String photo, String bday) {
 //        this.id = id;
 //        this.username = username;

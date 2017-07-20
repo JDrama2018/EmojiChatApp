@@ -1,7 +1,9 @@
 package com.dev.wangri.muslimkeyboard.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,18 +29,25 @@ import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
 import com.dev.wangri.muslimkeyboard.utility.UI.ProgressDialogFragment;
 import com.dev.wangri.muslimkeyboard.utility.Util;
 import com.dev.wangri.muslimkeyboard.utility.models.FirebaseValueListener;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.appinvite.FirebaseAppInvite;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 
 import java.util.TimerTask;
 
 
 public class HomeActivity extends BaseActivity {
-
+    public static final int REQUEST_INVITE = 201;
     public static final String MyPREFERENCES = "MyPrefs";
+    private static final String TAG = HomeActivity.class.getSimpleName();
     private static HomeActivity activityInstance = null;
     FirebaseAuth mAuth;
     Boolean bFirstTime = true;
@@ -71,6 +80,43 @@ public class HomeActivity extends BaseActivity {
 
         bFirstTime = false;
         activityInstance = this;
+
+
+        // Check for App Invite invitations and launch deep-link activity if possible.
+        // Requires that an Activity is registered in AndroidManifest.xml to handle
+        // deep-link URLs.
+        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData data) {
+                        if (data == null) {
+                            Log.d(TAG, "getInvitation: no data");
+                            return;
+                        }
+
+                        // Get the deep link
+                        Uri deepLink = data.getLink();
+                        String deepLinkString = deepLink.toString();
+                        String token = deepLinkString.substring(deepLinkString.indexOf("token=") + 6, deepLinkString.length());
+                        Log.d(TAG, "onSuccess() called with: token = [" + token + "]");
+                        // Extract invite
+                        FirebaseAppInvite invite = FirebaseAppInvite.getInvitation(data);
+                        if (invite != null) {
+                            String invitationId = invite.getInvitationId();
+                            Log.d(TAG, "onSuccess() invitationId " + invitationId);
+                        }
+                        if (!token.equals(FirebaseManager.getInstance().getCurrentUserID()))
+                            FirebaseManager.getInstance().acceptFriendRequest(token);
+                        // Handle the deep link
+                        // ...
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "getDynamicLink:onFailure", e);
+                    }
+                });
     }
 
     @Override
@@ -335,6 +381,26 @@ public class HomeActivity extends BaseActivity {
 
         if (sentListener != null) {
             sentListener.removeListener();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("AddUserActivity", "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Log.d("AddUserActivity", "onActivityResult: sent invitation " + id);
+                }
+            } else {
+                Toast.makeText(activityInstance, "Invite canceled", Toast.LENGTH_SHORT).show();
+                // Sending failed or it was canceled, show failure message to the user
+                // ...
+            }
         }
     }
 }

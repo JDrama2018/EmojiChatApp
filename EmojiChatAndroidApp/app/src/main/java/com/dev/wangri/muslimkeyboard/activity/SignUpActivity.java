@@ -6,18 +6,21 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dev.wangri.muslimkeyboard.R;
 import com.dev.wangri.muslimkeyboard.contryspinner.CountrySpinner;
 import com.dev.wangri.muslimkeyboard.contryspinner.Iso2Phone;
 import com.dev.wangri.muslimkeyboard.utility.FontUtils;
+import com.dev.wangri.muslimkeyboard.utility.NetworkAvailablity;
 import com.sinch.verification.PhoneNumberFormattingTextWatcher;
 import com.sinch.verification.PhoneNumberUtils;
 
@@ -38,8 +41,14 @@ public class SignUpActivity extends AppCompatActivity {
     Button mSmsButton;
     @BindView(R.id.signUpLayout)
     LinearLayout signUpLayout;
+    @BindView(R.id.edt_password)
+    EditText edtPassword;
+    @BindView(R.id.progressIndicator)
+    ProgressBar progressIndicator;
     private String mCountryIso;
     private TextWatcher mNumberTextWatcher;
+    private String strPhoneNumber;
+    private String strUserPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +120,30 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void OnsignUpClick(View view) {
+
+        strPhoneNumber = mPhoneNumber.getText().toString().trim();
+        strUserPassword = edtPassword.getText().toString().trim();
+
+        if (TextUtils.isEmpty(strPhoneNumber)) {
+            mPhoneNumber.setError("Please enter valid phone");
+
+        } else if (TextUtils.isEmpty(strUserPassword)) {
+            edtPassword.setError("Please enter the password");
+
+        } else if (strUserPassword.length() < 8 && strUserPassword.length() > 12) {
+            edtPassword.setError("Invalid password");
+
+        } else {
+            if (NetworkAvailablity.getInstance().checkNetworkStatus(SignUpActivity.this)) {
+                openPhoneConfirmationDialog();
+
+            }
+        }
+
+
+    }
+
+    private void openPhoneConfirmationDialog() {
         final Dialog dialog = new Dialog(SignUpActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -132,13 +165,14 @@ public class SignUpActivity extends AppCompatActivity {
                 Intent intent = new Intent(SignUpActivity.this, VerificationCodeActivity.class);
                 intent.putExtra(Intent.EXTRA_PHONE_NUMBER, e164Number);
                 intent.putExtra(Intent.EXTRA_TITLE, "SignUp");
+                intent.putExtra(Intent.EXTRA_TEXT, strUserPassword);
                 startActivity(intent);
                 dialog.dismiss();
+                finish();
             }
         });
         text.setText(String.format("%s%s", getString(R.string.sendvefication_code_msg), e164Number));
         dialog.show();
-
     }
 
     public void OnCancelClick(View view) {

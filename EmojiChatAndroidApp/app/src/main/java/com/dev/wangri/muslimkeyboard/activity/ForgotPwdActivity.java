@@ -1,96 +1,46 @@
 package com.dev.wangri.muslimkeyboard.activity;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.dev.wangri.muslimkeyboard.R;
-import com.dev.wangri.muslimkeyboard.utility.BaseActivity;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.dev.wangri.muslimkeyboard.utility.FontUtils;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ForgotPwdActivity extends BaseActivity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    EditText etEmail;
-    TextView tvInvalidEmail;
-    RelativeLayout layoutDone;
+public class ForgotPwdActivity extends AppCompatActivity {
+
+
+    @BindView(R.id.progressIndicator)
+    ProgressBar progressIndicator;
+    @BindView(R.id.edt_password)
+    EditText edtPassword;
+    @BindView(R.id.edt_confpassword)
+    EditText edtConfpassword;
+    @BindView(R.id.btnCreatePassword)
+    Button btnCreatePassword;
+    @BindView(R.id.signInLayout)
+    LinearLayout forgotPwdInLayout;
+    FirebaseAuth mAuth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_pwd);
-
-        etEmail = (EditText) findViewById(R.id.et_email);
-        layoutDone = (RelativeLayout) findViewById(R.id.doneOverlayLayout);
-        layoutDone.setVisibility(View.GONE);
-
-        etEmail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                tvInvalidEmail.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        findViewById(R.id.tvDone).setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                layoutDone.setVisibility(View.GONE);
-                etEmail.setEnabled(true);
-            }
-        });
-
-        tvInvalidEmail = (TextView) findViewById(R.id.tvInvalidEmail);
-        tvInvalidEmail.setVisibility(View.INVISIBLE);
-
-        findViewById(R.id.btn_recover).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String strEmail = etEmail.getText().toString();
-                if (strEmail.equals("")) {
-                    etEmail.setError("Please enter your email");
-                } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(strEmail).matches()) {
-                    etEmail.setError("Please enter a valid email address");
-                    return;
-                }
-                progressDialog.show();
-                resetPwd(strEmail);
-            }
-        });
-
-        findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        ButterKnife.bind(this);
+        FontUtils.setFont(forgotPwdInLayout, FontUtils.AvenirLTStdBook);
+        mAuth = FirebaseAuth.getInstance();
     }
 
-    public void resetPwd(String strEmail) {
+   /* public void resetPwd(String strEmail) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.sendPasswordResetEmail(strEmail)
                 .addOnSuccessListener(new OnSuccessListener() {
@@ -112,20 +62,19 @@ public class ForgotPwdActivity extends BaseActivity {
 
             }
         });
-    }
+    }*/
 
-    @Override
-    protected void initUI() {
 
-    }
+    public void OnClickCreateNewPassword(View view) {
+        if (edtPassword.getText().toString().equals(edtConfpassword.getText().toString())) {
+            setNewPassword();
+        } else {
+            Toast.makeText(ForgotPwdActivity.this, "Password Not matching", Toast.LENGTH_SHORT).show();
 
-    @Override
-    public void onBackPressed() {
-        if (layoutDone.getVisibility() == View.VISIBLE) {
-            layoutDone.setVisibility(View.GONE);
-            etEmail.setEnabled(true);
-            return;
         }
-        super.onBackPressed();
+    }
+
+    private void setNewPassword() {
+
     }
 }

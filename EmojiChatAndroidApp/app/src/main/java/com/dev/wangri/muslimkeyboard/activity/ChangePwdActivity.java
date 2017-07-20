@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import com.dev.wangri.muslimkeyboard.R;
 import com.dev.wangri.muslimkeyboard.utility.BaseActivity;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
-import com.dev.wangri.muslimkeyboard.utility.Toaster;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -85,10 +84,9 @@ public class ChangePwdActivity extends BaseActivity {
                     return;
                 }
 
-                String strEmail = FirebaseManager.getInstance().getCurrentUserEmail();
+                String strEmail = FirebaseManager.getInstance().getCurrentUserName();
 
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
                 AuthCredential credential = EmailAuthProvider
                         .getCredential(strEmail, strCurPwd);
                 progressDialog.show();
@@ -112,7 +110,7 @@ public class ChangePwdActivity extends BaseActivity {
                                                 enableEditTextViews(false);
                                             } else {
                                                 //Failed
-                                                Toaster.shortToast("Failed");
+                                                //shortToast("Failed");
                                             }
                                         }
                                     });

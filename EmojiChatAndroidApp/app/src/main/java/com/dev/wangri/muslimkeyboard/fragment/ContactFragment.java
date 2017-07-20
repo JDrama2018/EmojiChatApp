@@ -2,6 +2,7 @@ package com.dev.wangri.muslimkeyboard.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -20,17 +21,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dev.wangri.muslimkeyboard.R;
-import com.dev.wangri.muslimkeyboard.activity.AddUserActivity;
 import com.dev.wangri.muslimkeyboard.activity.ChatActivity;
 import com.dev.wangri.muslimkeyboard.activity.FriendActivity;
+import com.dev.wangri.muslimkeyboard.activity.HomeActivity;
 import com.dev.wangri.muslimkeyboard.activity.group.GroupChatActivity;
 import com.dev.wangri.muslimkeyboard.adapter.ContactAdapter;
 import com.dev.wangri.muslimkeyboard.adapter.widget.IndexableListView;
 import com.dev.wangri.muslimkeyboard.bean.User;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
 import com.dev.wangri.muslimkeyboard.utility.models.FirebaseValueListener;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -164,6 +168,7 @@ public class ContactFragment extends Fragment implements View.OnClickListener {
                 User user = (User) adapter.getItem(position);
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
                 intent.putExtra("user", user);
+                intent.putExtra("position", position);
                 startActivity(intent);
             }
         });
@@ -224,26 +229,25 @@ public class ContactFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.img_add:
-                showActionMenu();
+//                showActionMenu();
                 break;
             case R.id.maskView:
-                hideActionMenu();
+//                hideActionMenu();
                 break;
             case R.id.new_chat:
-                hideActionMenu();
-
+//                hideActionMenu();
                 Intent intent1 = new Intent(getActivity(), FriendActivity.class);
                 startActivity(intent1);
                 break;
             case R.id.add_friends:
-                hideActionMenu();
-
-                Intent i = new Intent(getActivity(), AddUserActivity.class);
-                startActivity(i);
+//                hideActionMenu();
+                onInviteClicked();
+//                Intent i = new Intent(getActivity(), AddUserActivity.class);
+//                startActivity(i);
 
                 break;
             case R.id.group_chat:
-                hideActionMenu();
+//                hideActionMenu();
 
                 Intent intent = new Intent(getActivity(), GroupChatActivity.class);
                 startActivity(intent);
@@ -255,6 +259,21 @@ public class ContactFragment extends Fragment implements View.OnClickListener {
                 hideFriendRequests();
                 break;
         }
+    }
+
+    private void onInviteClicked() {
+
+        Map<String, String> parameter = new HashMap<>();
+        parameter.put("token", FirebaseManager.getInstance().getCurrentUserID());
+        Intent intent = new AppInviteInvitation.IntentBuilder("Muslim Emoji App")
+                .setMessage("Join me here")
+                .setDeepLink(Uri.parse("https://g6wup.app.goo.gl?token=" + FirebaseManager.getInstance().getCurrentUserID()))
+                .setCallToActionText("Accept Request")
+//                .setAdditionalReferralParameters(parameter)
+//                .setOtherPlatformsTargetApplication(AppInviteInvitation.IntentBuilder.PlatformMode.PROJECT_PLATFORM_IOS, "com.dev.wangri.muslimojis")
+                .build();
+        startActivityForResult(intent, HomeActivity.REQUEST_INVITE);
+
     }
 
     private class RequestAdapter extends BaseAdapter {
@@ -288,11 +307,13 @@ public class ContactFragment extends Fragment implements View.OnClickListener {
 
             final ViewHolder viewHolder = new ViewHolder();
             viewHolder.name = (TextView) view.findViewById(R.id.tv_name);
+            viewHolder.tv_phoneNumber = (TextView) view.findViewById(R.id.tv_phoneNumber);
             viewHolder.imgAcceptRequest = (ImageView) view.findViewById(R.id.img_accept_friend_request);
             viewHolder.imgRejectRequest = (ImageView) view.findViewById(R.id.img_reject_friend_request);
             viewHolder.circleImageView = (CircleImageView) view.findViewById(R.id.profile_image);
-
-            viewHolder.name.setText(FirebaseManager.getInstance().requestList.get(position).username);
+            User user = FirebaseManager.getInstance().requestList.get(position);
+            viewHolder.name.setText(String.format("%s %s", user.firstname, user.lastname));
+            viewHolder.tv_phoneNumber.setText(String.format("%s", user.username));
 
             viewHolder.imgAcceptRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -317,7 +338,7 @@ public class ContactFragment extends Fragment implements View.OnClickListener {
 
     private class ViewHolder {
 
-        public TextView name;
+        public TextView name, tv_phoneNumber;
         public ImageView imgAcceptRequest, imgRejectRequest;
         public CircleImageView circleImageView;
     }

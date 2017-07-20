@@ -327,10 +327,15 @@ public class FirebaseManager {
                 onUpdateListener.onUpdate();
             }
         };
-        Query query = mUserRef.orderByChild("username")
+        Query query = mUserRef.orderByChild("firstname")
                 .startAt(keyword)
                 .endAt(keyword + "zzz");
         query.addListenerForSingleValueEvent(valueEventListener);
+
+        /*Query query = mUserRef.orderByChild("username")
+                .startAt(keyword)
+                .endAt(keyword + "zzz");
+        query.addListenerForSingleValueEvent(valueEventListener);*/
 
         return new FirebaseValueListener(query, valueEventListener);
     }
@@ -589,7 +594,7 @@ public class FirebaseManager {
                                         dialog.photo = user.photo;
                                     else
                                         dialog.photo = "";
-                                    dialog.title = user.username;
+                                    dialog.title = String.format("%s %s", user.firstname, user.lastname);
                                     if (dialogList.indexOf(dialog) == (dialogList.size() - 1))
                                         refreshChatBadge(onUpdateListener);
                                 }
@@ -620,7 +625,7 @@ public class FirebaseManager {
 
     public void removeFriend(String userID) {
         getCurrentUserFriendsRef().child(userID).removeValue();
-        mUserRef.child(userID).child("friends").child(mAuth.getCurrentUser().getUid()).setValue(true);
+        mUserRef.child(userID).child("friends").child(mAuth.getCurrentUser().getUid()).setValue(false);
     }
 
     public void acceptFriendRequest(String userID) {
@@ -641,6 +646,11 @@ public class FirebaseManager {
         mUserRef.child(userID).child("friends").child(mAuth.getCurrentUser().getUid()).setValue(true);
 //        mUserRef.child(userID).child("requests").child(mAuth.getCurrentUser().getUid()).removeValue();
         mUserRef.child(userID).child("sentRequests").child(mAuth.getCurrentUser().getUid()).removeValue();
+    }
+
+    public void blockUser(String userID) {
+        mUserRef.child(userID).child("blockedUser").child(mAuth.getCurrentUser().getUid()).setValue(true);
+        mUserRef.child(mAuth.getCurrentUser().getUid()).child("blockedUser").child(userID).setValue(true);
     }
 
     public void markAsRead(String dialogID) {

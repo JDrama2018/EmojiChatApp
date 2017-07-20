@@ -11,8 +11,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
-import com.dev.wangri.muslimkeyboard.utility.CoreApp;
-
 import java.io.File;
 
 public class FileUtil {
@@ -93,26 +91,6 @@ public class FileUtil {
         return null;
     }
 
-    public static String getAppExternalDataDirectoryPath() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Environment.getExternalStorageDirectory())
-                .append(File.separator)
-                .append("Android")
-                .append(File.separator)
-                .append("data")
-                .append(File.separator)
-                .append(CoreApp.getInstance().getPackageName())
-                .append(File.separator);
-
-        return sb.toString();
-    }
-
-    public static File getAppExternalDataDirectoryFile() {
-        File dataDirectoryFile = new File(getAppExternalDataDirectoryPath());
-        dataDirectoryFile.mkdirs();
-
-        return dataDirectoryFile;
-    }
 
     /**
      * Get the value of the data column for this Uri. This is useful for

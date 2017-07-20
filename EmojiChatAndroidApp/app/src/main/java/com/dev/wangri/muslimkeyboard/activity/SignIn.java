@@ -38,7 +38,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.quickblox.auth.session.QBSettings;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -83,8 +82,6 @@ public class SignIn extends BaseActivity implements View.OnClickListener {
         mAuth = FirebaseAuth.getInstance();
 
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        QBSettings.getInstance().init(this, appConst.app_id, appConst.auth_key, appConst.auth_secret);
-        QBSettings.getInstance().setAccountKey(appConst.account_key);
         initView();
 
         boolean bShowPopup = sharedpreferences.getBoolean("isFirstTime", true);
@@ -225,7 +222,6 @@ public class SignIn extends BaseActivity implements View.OnClickListener {
                 }
                 SharedPreferences.Editor editor = sharedpreferences.edit();
                 editor.putBoolean("Remember", bRemember);
-                editor.commit();
                 editor.apply();
                 signInService();
 
@@ -341,14 +337,14 @@ public class SignIn extends BaseActivity implements View.OnClickListener {
                         editor.putString("user_id", task.getResult().getUser().getUid());
                         editor.putString("push_token", FirebaseInstanceId.getInstance().getToken());
 
-                        editor.commit();
+                        editor.apply();
                         String uID = task.getResult().getUser().getUid();
                         FirebaseManager.getInstance().getUser(uID, new FirebaseManager.OnUserResponseListener() {
                             @Override
                             public void onUserResponse(User user) {
                                 SharedPreferences.Editor editor = sharedpreferences.edit();
                                 editor.putString("user_name", user.username);
-                                editor.commit();
+                                editor.apply();
                             }
                         });
 

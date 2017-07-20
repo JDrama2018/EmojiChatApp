@@ -1,1 +1,1 @@
-include ':app', ':quickblox-android-sdk-content-3.3.1', ':CropingLib'
+include ':app', ':CropingLib'

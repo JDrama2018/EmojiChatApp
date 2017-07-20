@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.dev.wangri.muslimkeyboard.R;
 import com.dev.wangri.muslimkeyboard.activity.ContactUsActivity;
-import com.dev.wangri.muslimkeyboard.activity.SignIn;
+import com.dev.wangri.muslimkeyboard.activity.SignInActivity;
 import com.dev.wangri.muslimkeyboard.activity.profile.CurrentUserProfileActivity;
 import com.dev.wangri.muslimkeyboard.bean.User;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
@@ -51,11 +51,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
     private void initView() {
         view.findViewById(R.id.profileLayout).setOnClickListener(this);
-//        view.findViewById(R.id.emojiLayout).setOnClickListener(this);
+        view.findViewById(R.id.emojiLayout).setOnClickListener(this);
         view.findViewById(R.id.privacyLayout).setOnClickListener(this);
         view.findViewById(R.id.contactUsLayout).setOnClickListener(this);
         view.findViewById(R.id.aboutUsLayout).setOnClickListener(this);
         view.findViewById(R.id.notificationLayout).setOnClickListener(this);
+        view.findViewById(R.id.rateLayout).setOnClickListener(this);
         toggleNoti = (ImageView) view.findViewById(R.id.toggleNoti);
         imvAvatar = (CircleImageView) view.findViewById(R.id.profile_image);
         tvName = (TextView) view.findViewById(R.id.tv_name);
@@ -99,9 +100,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             case R.id.profileLayout:
                 showProfile();
                 break;
-//            case R.id.emojiLayout:
-//                showMuslimEmojis();
-//                break;
+            case R.id.emojiLayout:
+                showMuslimEmojis();
+                break;
             case R.id.privacyLayout:
                 showPrivacy();
                 break;
@@ -110,6 +111,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.contactUsLayout:
                 showContactUs();
+                break;
+            case R.id.rateLayout:
+                rateUs();
                 break;
             case R.id.notificationLayout:
                 bNotiEnable = !bNotiEnable;
@@ -123,6 +127,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void rateUs() {
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -130,7 +138,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 if (resultCode == Activity.RESULT_OK) {
                     getActivity().finish();
 
-                    Intent i = new Intent(getActivity(), SignIn.class);
+                    Intent i = new Intent(getActivity(), SignInActivity.class);
                     startActivity(i);
                 }
                 break;
@@ -142,10 +150,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         startActivityForResult(i, CURRENT_USER_PROFILE_ACTIVITY_REQUEST_CODE);
     }
 
-//    private void showMuslimEmojis() {
+    private void showMuslimEmojis() {
 //        Intent intent = new Intent(getActivity(), com.dev.wangri.muslimkeyboard.SplashActivity.class);
 //        startActivity(intent);
-//    }
+    }
 
     private void showPrivacy() {
         Intent intent = new Intent("android.intent.action.VIEW", Uri.parse("http://www.muslimemoji.com/privacy"));

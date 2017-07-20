@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.dev.wangri.muslimkeyboard.R;
 import com.dev.wangri.muslimkeyboard.activity.profile.UserProfileActivity;
+import com.dev.wangri.muslimkeyboard.utility.AppConst;
 import com.dev.wangri.muslimkeyboard.utility.FontUtils;
 import com.sinch.verification.CodeInterceptionException;
 import com.sinch.verification.Config;
@@ -50,7 +51,7 @@ public class VerificationCodeActivity extends AppCompatActivity {
     ProgressBar mProgressIndicator;
     @BindView(R.id.verificationLayout)
     LinearLayout verificationLayout;
-
+    AppConst appConst = new AppConst();
 
     private boolean mShouldFallback = true;
 
@@ -69,6 +70,7 @@ public class VerificationCodeActivity extends AppCompatActivity {
     private String mPhoneNumber;
     private BottomSheetDialog dialog;
     private String extraTitle;
+    private String mPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +78,14 @@ public class VerificationCodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_verification_code);
         ButterKnife.bind(this);
         FontUtils.setFont(verificationLayout, FontUtils.AvenirLTStdBook);
+
+//        QBSettings.getInstance().init(this, appConst.app_id, appConst.auth_key, appConst.auth_secret);
+//        QBSettings.getInstance().setAccountKey(appConst.account_key);
+
         mPhoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
         extraTitle = getIntent().getStringExtra(Intent.EXTRA_TITLE);
+        if (extraTitle.equals("SignUp"))
+            mPassword = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         mtxtPhoneNumber.setText(mPhoneNumber);
         mIsSmsVerification = true;
         requestPermissions();
@@ -176,10 +184,6 @@ public class VerificationCodeActivity extends AppCompatActivity {
         }
     }
 
-    void openUserProfileActivity() {
-        Intent intent = new Intent(VerificationCodeActivity.this, UserProfileActivity.class);
-        startActivity(intent);
-    }
 
     private void hideProgressAndShowMessage() {
         hideProgress();
@@ -238,8 +242,10 @@ public class VerificationCodeActivity extends AppCompatActivity {
             hideProgressAndShowMessage();
             if (extraTitle.equals("SignUp")) {
                 openUserProfileActivity();
-            } else if (extraTitle.equals("SignUp")) {
+            } else if (extraTitle.equals("SignIn")) {
                 openHomeActivity();
+            } else if (extraTitle.equals("ForgotPassward")) {
+                openPasswordCreateActvity();
             }
         }
 
@@ -256,9 +262,21 @@ public class VerificationCodeActivity extends AppCompatActivity {
         }
     }
 
+
+    private void openPasswordCreateActvity() {
+        startActivity(new Intent(VerificationCodeActivity.this, ForgotPwdActivity.class));
+    }
+
+    private void openUserProfileActivity() {
+        Intent intent = new Intent(VerificationCodeActivity.this, UserProfileActivity.class);
+        intent.putExtra(Intent.EXTRA_PHONE_NUMBER, mPhoneNumber);
+        intent.putExtra(Intent.EXTRA_TEXT, mPassword);
+        startActivity(intent);
+    }
+
     private void openHomeActivity() {
         startActivity(new Intent(VerificationCodeActivity.this, HomeActivity.class));
-        finishAffinity();
+        finish();
     }
 
     @OnClick(R.id.txt_back)

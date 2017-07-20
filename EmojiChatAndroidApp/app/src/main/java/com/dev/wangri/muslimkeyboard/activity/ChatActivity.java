@@ -150,6 +150,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
             }
         }
     };
+    private int position;
 
     public static ChatActivity getInstance() {
         return activityInstance;
@@ -178,6 +179,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 User user = (User) intent.getSerializableExtra("user");
                 dialog = Dialog.createIndividualDialog(user);
                 FirebaseManager.getInstance().createIndividualDialog(user);
+                 position = intent.getIntExtra("position", 0);
             } else if (intent.hasExtra("dialog")) {
                 dialog = (Dialog) intent.getSerializableExtra("dialog");
             } else {
@@ -820,6 +822,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         if (dialog.type == Dialog.DialogType.Individual) {
             Intent i = new Intent(ChatActivity.this, ProfileActivity.class);
             i.putExtra("userID", dialog.occupantsIds.get(0));
+            i.putExtra("dialog", dialog);
+            i.putExtra("position", position);
             startActivity(i);
         } else if (dialog.type == Dialog.DialogType.Group) {
             Intent i = new Intent(ChatActivity.this, GroupInfoActivity.class);

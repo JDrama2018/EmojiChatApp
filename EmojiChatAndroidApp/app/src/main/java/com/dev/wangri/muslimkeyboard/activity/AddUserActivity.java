@@ -1,12 +1,15 @@
 package com.dev.wangri.muslimkeyboard.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +26,16 @@ import com.dev.wangri.muslimkeyboard.tasks.SendPushTask;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
 import com.dev.wangri.muslimkeyboard.utility.Util;
 import com.dev.wangri.muslimkeyboard.utility.models.FirebaseValueListener;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.dev.wangri.muslimkeyboard.activity.SignIn.MyPREFERENCES;
+import static com.dev.wangri.muslimkeyboard.activity.HomeActivity.MyPREFERENCES;
 
 /**
  * This activity class is used for Subscribing friends from all users.
@@ -46,6 +52,7 @@ public class AddUserActivity extends AppCompatActivity implements View.OnClickLi
     private static final String ENTRIES_DELETED_ERROR = "Failed to delete friends";
     private static final String SUBSCRIPTION_ERROR = "Failed to confirm subscription";
     private static final String ROSTER_INIT_ERROR = "ROSTER isn't initialized. Please make relogin";
+    private static final int REQUEST_INVITE = 201;
     private ImageView imgBack, ivCancelSearch;
     private EditText edtSearch;
     private ListView listViewAddFriends;
@@ -188,6 +195,7 @@ public class AddUserActivity extends AppCompatActivity implements View.OnClickLi
 
             final ViewHolder viewHolder = new ViewHolder();
             viewHolder.name = (TextView) view.findViewById(R.id.tv_name);
+            viewHolder.phoneNumber = (TextView) view.findViewById(R.id.tv_phoneNumber);
             viewHolder.imgSendRequest = (ImageView) view.findViewById(R.id.img_send_request);
             viewHolder.circleImageView = (CircleImageView) view.findViewById(R.id.profile_image);
 
@@ -198,14 +206,16 @@ public class AddUserActivity extends AppCompatActivity implements View.OnClickLi
             } else
                 viewHolder.circleImageView.setImageResource(R.mipmap.profile);
 
-            viewHolder.name.setText(FirebaseManager.getInstance().searchUserList.get(position).username);
+            viewHolder.name.setText(FirebaseManager.getInstance().searchUserList.get(position).firstname + " " + FirebaseManager.getInstance().searchUserList.get(position).lastname);
+            viewHolder.phoneNumber.setText(FirebaseManager.getInstance().searchUserList.get(position).username);
 
             viewHolder.imgSendRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ArrayList<User> tmpList = FirebaseManager.getInstance().searchUserList;
                     User u = tmpList.get(position);
-
+                    FirebaseManager.getInstance().blockUser(u.id);
+/*//                    onInviteClicked(u.username);
                     SharedPreferences sharedpreferences = HomeActivity.getInstance().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
                     String username = sharedpreferences.getString("user_name", "");
 
@@ -213,7 +223,7 @@ public class AddUserActivity extends AppCompatActivity implements View.OnClickLi
                     FirebaseManager.getInstance().sendRequestToUser(FirebaseManager.getInstance().searchUserList.get(position).id);
                     Toast.makeText(AddUserActivity.this, "Friend request sent!", Toast.LENGTH_SHORT).show();
                     tmpList.remove(position);
-                    notifyDataSetChanged();
+                    notifyDataSetChanged();*/
                 }
             });
 
@@ -221,11 +231,72 @@ public class AddUserActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void onInviteClicked(String mPhoneNumber) {
+      /*  try {
+            DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+                    .setLink(Uri.parse("http://www.muslimemoji.com/"))
+                    .setDynamicLinkDomain("g6wup.app.goo.gl")
+
+                    // Open links with this app on Android
+
+                    .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
+                    .setSocialMetaTagParameters(new DynamicLink.SocialMetaTagParameters.Builder()
+                            .setTitle("token")
+                            .setDescription(FirebaseManager.getInstance().getCurrentUserID())
+                            .build())
+                    // Open links with com.example.ios on iOS
+//                    .setIosParameters(new DynamicLink.IosParameters.Builder("com.example.ios").build())
+                    .buildDynamicLink();
+
+            Uri dynamicLinkUri = dynamicLink.getUri();
+            Log.d("ADdUserActivity", "onInviteClicked() " + dynamicLinkUri);
+//            String sms = dynamicLinkUri.toString();
+//            SmsManager smsManager = SmsManager.getDefault();
+//            smsManager.sendTextMessage(mPhoneNumber, null, sms, null, null);
+//            Toast.makeText(getApplicationContext(), "SMS Sent!",
+//                    Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(),
+                    "SMS faild, please try again later!",
+                    Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }*/
+        Map<String, String> parameter = new HashMap<>();
+        parameter.put("token", FirebaseManager.getInstance().getCurrentUserID());
+        Intent intent = new AppInviteInvitation.IntentBuilder("Muslim Emoji App")
+                .setMessage("Join me here")
+                .setDeepLink(Uri.parse("https://g6wup.app.goo.gl"))
+                .setCallToActionText("Accept Request")
+                .setAdditionalReferralParameters(parameter)
+                .build();
+        startActivityForResult(intent, REQUEST_INVITE);
+
+    }
+
     private class ViewHolder {
 
         public TextView name, tvAccept, tvCancel;
         public ImageView imgSendRequest;
         public CircleImageView circleImageView;
+        public TextView phoneNumber;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("AddUserActivity", "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Log.d("AddUserActivity", "onActivityResult: sent invitation " + id);
+                }
+            } else {
+                // Sending failed or it was canceled, show failure message to the user
+                // ...
+            }
+        }
+    }
 }

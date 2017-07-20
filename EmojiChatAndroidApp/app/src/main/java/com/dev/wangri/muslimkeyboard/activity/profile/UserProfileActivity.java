@@ -2,6 +2,7 @@ package com.dev.wangri.muslimkeyboard.activity.profile;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,13 +21,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dev.wangri.muslimkeyboard.R;
+import com.dev.wangri.muslimkeyboard.activity.HomeActivity;
 import com.dev.wangri.muslimkeyboard.constants.FileUtil;
+import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
 import com.dev.wangri.muslimkeyboard.utility.FontUtils;
+import com.dev.wangri.muslimkeyboard.utility.UsernameExistQueryEventListener;
 import com.dev.wangri.muslimkeyboard.utility.Util;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
@@ -50,6 +57,10 @@ public class UserProfileActivity extends AppCompatActivity {
     Button btnNext;
     @BindView(R.id.userProfileLayout)
     LinearLayout userProfileLayout;
+    @BindView(R.id.progressIndicator)
+    ProgressBar progressDialog;
+    @BindView(R.id.edt_email)
+    EditText edtEmail;
     private BottomSheetDialog dialog;
     static final int CAMERA_REQUEST = 102;
     private static final int IMAGE_REQUEST = 101;
@@ -61,6 +72,12 @@ public class UserProfileActivity extends AppCompatActivity {
     private ArrayList<String> permissions = new ArrayList<>();
     private Bitmap yourSelectedImage;
     private String tempFilePath = "";
+    private String mPhoneNumber;
+    private String mPassword;
+    private String strFirstName;
+    private String strLastName;
+    private String strEmail;
+    public static final String MyPREFERENCES = "MyPrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +85,9 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
         ButterKnife.bind(this);
         FontUtils.setFont(userProfileLayout, FontUtils.AvenirLTStdBook);
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        mPhoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+        mPassword = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         permissions.add(CAMERA);
         permissionsToRequest = findUnAskedPermissions(permissions);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -107,8 +127,58 @@ public class UserProfileActivity extends AppCompatActivity {
                 openImageSelectionSheet();
                 break;
             case R.id.btn_next:
+                signUpUser();
                 break;
         }
+    }
+
+    private void signUpUser() {
+        String[] splited = txtPersonname.getText().toString().split("\\s+");
+        strFirstName = splited[0];
+        strLastName = splited[1];
+        strEmail = mPhoneNumber + "@muslimapp.com";
+        progressDialog.setVisibility(View.VISIBLE);
+//        if (android.util.Patterns.EMAIL_ADDRESS.matcher(strEmail).matches()) {
+
+        UsernameExistQueryEventListener completionHandler = new UsernameExistQueryEventListener() {
+            @Override
+            public void onUsernameQueryDone(Boolean bSuccess, String email) {
+                if (bSuccess) {
+                    progressDialog.setVisibility(View.INVISIBLE);
+                    Toast.makeText(UserProfileActivity.this, "Username is already exist.", Toast.LENGTH_SHORT).show();
+                } else {
+                    FirebaseManager.getInstance().createAccount(UserProfileActivity.this, strFirstName, strLastName, strEmail, mPassword, mPhoneNumber, "", tempFilePath,
+                            new FirebaseManager.OnBooleanListener() {
+                                @Override
+                                public void onBooleanResponse(boolean success) {
+                                    progressDialog.setVisibility(View.INVISIBLE);
+                                    if (success) {
+                                        FirebaseDatabase.getInstance().getReference().child("usernameEmailLink").child(mPhoneNumber.toLowerCase()).setValue(strEmail);
+
+                                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                                        editor.putString("session", "login");
+                                        editor.putString("user_email", strEmail);
+                                        editor.putString("user_pass", mPassword);
+                                        editor.putString("push_token", FirebaseInstanceId.getInstance().getToken());
+                                        editor.apply();
+
+                                        FirebaseManager.getInstance().updatePushToken(FirebaseInstanceId.getInstance().getToken());
+
+                                        Intent i = new Intent(UserProfileActivity.this, HomeActivity.class);
+                                        startActivity(i);
+                                        finish();
+                                    } else {
+                                        Toast.makeText(UserProfileActivity.this, "SignUp failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            }
+        };
+        FirebaseManager.getInstance().getEmailFromUsername(mPhoneNumber, completionHandler);
+//        } else {
+//            edtEmail.setError("Please enter a valid email address");
+//        }
     }
 
     @Override

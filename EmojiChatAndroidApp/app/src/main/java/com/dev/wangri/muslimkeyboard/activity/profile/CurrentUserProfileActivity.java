@@ -44,6 +44,7 @@ public class CurrentUserProfileActivity extends BaseActivity implements View.OnC
     User user;
     LinearLayout changePhotoLayout;
     RelativeLayout overlayLayout;
+    private TextView tvName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,7 @@ public class CurrentUserProfileActivity extends BaseActivity implements View.OnC
         changePhotoLayout = (LinearLayout) findViewById(R.id.changePhotoLayout);
         imvAvatar = (ImageView) findViewById(R.id.iv_avatar);
         tvFullname = (TextView) findViewById(R.id.tv_fullname);
+        tvName = (TextView) findViewById(R.id.tv_name);
         tvEmail = (TextView) findViewById(R.id.tv_email);
 //        registerForContextMenu(changePhotoLayout);
     }
@@ -150,6 +152,7 @@ public class CurrentUserProfileActivity extends BaseActivity implements View.OnC
 
                 tvEmail.setText(user.email);
                 tvFullname.setText(user.username);
+                tvName.setText(user.firstname + " " + user.lastname);
             }
         });
     }

@@ -67,6 +67,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "759905974451-4qk3nbbe45u0b7g4vf99i33baj2sr7le.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dev.wangri.muslimkeyboard",
+            "certificate_hash": "e76074ddae8c96e5d42efb13edd0bea0135aea2f"
+          }
+        },
+        {
           "client_id": "759905974451-622rld4hmq59v35adipgj8g5j8baj0m7.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -81,8 +89,21 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759905974451-2hknpfkfuvs973cmukph9l7c8ganfjif.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dev.wangri.muslimojis",
+                "app_store_id": "1076407343"
+              }
+            },
+            {
+              "client_id": "759905974451-622rld4hmq59v35adipgj8g5j8baj0m7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
