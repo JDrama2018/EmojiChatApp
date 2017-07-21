@@ -164,7 +164,7 @@ public class GroupInfoActivity extends BaseActivity {
 
             User user = userList.get(position);
 
-            viewHolder.name.setText(user.username);
+            viewHolder.name.setText(user.firstname + " " + user.lastname);
 
             if (user.photo != null && user.photo.length() > 0) {
                 Picasso.with(context1).load(user.photo).into(viewHolder.circleImageView);

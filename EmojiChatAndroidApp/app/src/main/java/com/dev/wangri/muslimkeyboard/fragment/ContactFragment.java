@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dev.wangri.muslimkeyboard.R;
+import com.dev.wangri.muslimkeyboard.activity.AddUserActivity;
 import com.dev.wangri.muslimkeyboard.activity.ChatActivity;
 import com.dev.wangri.muslimkeyboard.activity.FriendActivity;
 import com.dev.wangri.muslimkeyboard.activity.HomeActivity;
@@ -241,9 +242,9 @@ public class ContactFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.add_friends:
 //                hideActionMenu();
-                onInviteClicked();
-//                Intent i = new Intent(getActivity(), AddUserActivity.class);
-//                startActivity(i);
+//                onInviteClicked();
+                Intent i = new Intent(getActivity(), AddUserActivity.class);
+                startActivity(i);
 
                 break;
             case R.id.group_chat:

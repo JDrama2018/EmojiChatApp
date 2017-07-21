@@ -48,6 +48,7 @@ import static com.dev.wangri.muslimkeyboard.activity.SignIn.MyPREFERENCES;
  */
 
 public class FirebaseManager {
+    private static final String TAG = FirebaseManager.class.getSimpleName();
     public static FirebaseManager mRefrence = null;
     public ArrayList<User> userList = new ArrayList<>();
     public ArrayList<User> searchUserList = new ArrayList<>();
@@ -832,11 +833,53 @@ public class FirebaseManager {
         }
     }
 
+    public void removeSingleMessage(String userId, final String key) {
+
+        getIndividualRoomID(userId, new OnStringListener() {
+            @Override
+            public void onStringResponse(String roomName) {
+                //mMessageRef.child(roomName).child(key).removeValue();
+                Log.d(TAG, "onStringResponse() called with: roomName = [" + roomName + "]");
+                Query queryRef = mMessageRef.child(roomName).child(key);
+
+                queryRef.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot snapshot, String previousChild) {
+                        snapshot.getRef().removeValue();
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
+
+    }
+
     public void addMessageListener(final Dialog dialog, final OnMessageListener messageListener) {
         final ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Message message = dataSnapshot.getValue(Message.class);
+                message.key = dataSnapshot.getKey();
                 messageListener.onMessageResponse(message);
             }
 
@@ -920,10 +963,17 @@ public class FirebaseManager {
                             SharedPreferences sharedpreferences = HomeActivity.getInstance().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
                             String username = sharedpreferences.getString("user_name", "");
 
-                            if (message.type == Message.MessageType.Photo)
-                                new SendPushTask(Util.pushJsonObjectFrom("", username + " sent a photo", user.pushToken)).execute();
-                            else
-                                new SendPushTask(Util.pushJsonObjectFrom("", username + " sent a message", user.pushToken)).execute();
+                            switch (message.type) {
+                                case Photo:
+                                    new SendPushTask(Util.pushJsonObjectFrom("", username + " sent a photo", user.pushToken)).execute();
+                                    break;
+                                case Document:
+                                    new SendPushTask(Util.pushJsonObjectFrom("", username + " sent a document", user.pushToken)).execute();
+                                    break;
+                                default:
+                                    new SendPushTask(Util.pushJsonObjectFrom("", username + " sent a message", user.pushToken)).execute();
+                                    break;
+                            }
                         }
                     }
                 }
@@ -1048,6 +1098,33 @@ public class FirebaseManager {
                         onStringListener.onStringResponse(null);
                     }
                 });
+    }
+
+    public void uploadDocument(Uri file, final OnStringListener onStringListener) {
+//        StorageReference avatarRef = mStorageRef.child("doc/chat/" + getCurrentUserID() + System.currentTimeMillis());
+//        StorageMetadata metadata = new StorageMetadata.Builder()
+//                .build();
+        StorageReference riversRef = mStorageRef.child("doc/chat/" + file.getLastPathSegment());
+        UploadTask uploadTask = riversRef.putFile(file);
+// Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.d(TAG, "onFailure() called with: exception = [" + exception + "]");
+                onStringListener.onStringResponse(null);
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Log.d(TAG, "onSuccess() called with: taskSnapshot = [" + downloadUrl.toString() + "]");
+                onStringListener.onStringResponse(downloadUrl.toString());
+            }
+        });
+
+
     }
 
     public void resetPassword(String userEmail) {

@@ -215,7 +215,6 @@ public class AddUserActivity extends AppCompatActivity implements View.OnClickLi
                     ArrayList<User> tmpList = FirebaseManager.getInstance().searchUserList;
                     User u = tmpList.get(position);
                     FirebaseManager.getInstance().blockUser(u.id);
-/*//                    onInviteClicked(u.username);
                     SharedPreferences sharedpreferences = HomeActivity.getInstance().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
                     String username = sharedpreferences.getString("user_name", "");
 
@@ -223,54 +222,12 @@ public class AddUserActivity extends AppCompatActivity implements View.OnClickLi
                     FirebaseManager.getInstance().sendRequestToUser(FirebaseManager.getInstance().searchUserList.get(position).id);
                     Toast.makeText(AddUserActivity.this, "Friend request sent!", Toast.LENGTH_SHORT).show();
                     tmpList.remove(position);
-                    notifyDataSetChanged();*/
+                    notifyDataSetChanged();
                 }
             });
 
             return view;
         }
-    }
-
-    private void onInviteClicked(String mPhoneNumber) {
-      /*  try {
-            DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
-                    .setLink(Uri.parse("http://www.muslimemoji.com/"))
-                    .setDynamicLinkDomain("g6wup.app.goo.gl")
-
-                    // Open links with this app on Android
-
-                    .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
-                    .setSocialMetaTagParameters(new DynamicLink.SocialMetaTagParameters.Builder()
-                            .setTitle("token")
-                            .setDescription(FirebaseManager.getInstance().getCurrentUserID())
-                            .build())
-                    // Open links with com.example.ios on iOS
-//                    .setIosParameters(new DynamicLink.IosParameters.Builder("com.example.ios").build())
-                    .buildDynamicLink();
-
-            Uri dynamicLinkUri = dynamicLink.getUri();
-            Log.d("ADdUserActivity", "onInviteClicked() " + dynamicLinkUri);
-//            String sms = dynamicLinkUri.toString();
-//            SmsManager smsManager = SmsManager.getDefault();
-//            smsManager.sendTextMessage(mPhoneNumber, null, sms, null, null);
-//            Toast.makeText(getApplicationContext(), "SMS Sent!",
-//                    Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(),
-                    "SMS faild, please try again later!",
-                    Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }*/
-        Map<String, String> parameter = new HashMap<>();
-        parameter.put("token", FirebaseManager.getInstance().getCurrentUserID());
-        Intent intent = new AppInviteInvitation.IntentBuilder("Muslim Emoji App")
-                .setMessage("Join me here")
-                .setDeepLink(Uri.parse("https://g6wup.app.goo.gl"))
-                .setCallToActionText("Accept Request")
-                .setAdditionalReferralParameters(parameter)
-                .build();
-        startActivityForResult(intent, REQUEST_INVITE);
-
     }
 
     private class ViewHolder {

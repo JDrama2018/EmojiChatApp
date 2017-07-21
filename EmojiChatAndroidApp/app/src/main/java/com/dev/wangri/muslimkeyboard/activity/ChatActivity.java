@@ -1,25 +1,34 @@
 package com.dev.wangri.muslimkeyboard.activity;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -34,6 +43,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dev.wangri.muslimkeyboard.R;
 import com.dev.wangri.muslimkeyboard.activity.group.GroupInfoActivity;
@@ -45,11 +55,16 @@ import com.dev.wangri.muslimkeyboard.bean.Dialog;
 import com.dev.wangri.muslimkeyboard.bean.Message;
 import com.dev.wangri.muslimkeyboard.bean.User;
 import com.dev.wangri.muslimkeyboard.utility.BaseActivity;
+import com.dev.wangri.muslimkeyboard.utility.FileUtils;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
+import com.dev.wangri.muslimkeyboard.utility.FontUtils;
 import com.dev.wangri.muslimkeyboard.utility.Util;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.soundcloud.android.crop.Crop;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -57,6 +72,7 @@ import com.squareup.picasso.Target;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -78,12 +94,15 @@ import static android.Manifest.permission.CAMERA;
 public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private static final int CAMERA_REQUEST = 102;
     private final static int ALL_PERMISSIONS_RESULT = 107;
+    private static final int FILE_SELECT_CODE = 108;
+    private static final String TAG = ChatActivity.class.getSimpleName();
     private static ChatActivity activityInstance = null;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     ListView list;
     EditText editTextMessage;
     ImageView imgViewSend, imageView, selectEmoji, selectKeyboard, imgAttach;
-    TextView chatNameHead;
+    TextView chatNameHead, tvLastSeen;
     ChatActivityAdapter chatAdapter;
     Dialog dialog;
     Bitmap yourSelectedImage;
@@ -151,6 +170,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         }
     };
     private int position;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private BottomSheetDialog bottomdialog;
 
     public static ChatActivity getInstance() {
         return activityInstance;
@@ -165,7 +186,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         permissionsToRequest = findUnAskedPermissions(permissions);
         //get the permissions we have asked for before but are not granted..
         //we will store this in a global list to access later.
-
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (permissionsToRequest.size() > 0)
@@ -179,14 +200,14 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 User user = (User) intent.getSerializableExtra("user");
                 dialog = Dialog.createIndividualDialog(user);
                 FirebaseManager.getInstance().createIndividualDialog(user);
-                 position = intent.getIntExtra("position", 0);
+                position = intent.getIntExtra("position", 0);
             } else if (intent.hasExtra("dialog")) {
                 dialog = (Dialog) intent.getSerializableExtra("dialog");
             } else {
                 finish();
             }
-
             chatNameHead.setText(dialog.title);
+            tvLastSeen.setText(DateUtils.formatDateTime(ChatActivity.this, dialog.lastSeenDate, DateUtils.FORMAT_SHOW_TIME));
             if (dialog.photo != null && dialog.photo.length() > 0) {
                 Picasso.with(this).load(dialog.photo).into(imgProfile);
             } else {
@@ -250,6 +271,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
         findViewById(R.id.layoutTakePhoto).setOnClickListener(this);
         findViewById(R.id.layoutChoosePhoto).setOnClickListener(this);
+        findViewById(R.id.layoutDocument).setOnClickListener(this);
+        findViewById(R.id.layoutLocation).setOnClickListener(this);
         findViewById(R.id.layoutCancel).setOnClickListener(this);
         findViewById(R.id.maskView).setOnClickListener(this);
 
@@ -262,6 +285,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         mEmoticonHandler = new EmoticonHandler(this, editTextMessage);
 
         chatNameHead = (TextView) findViewById(R.id.tvChatName);
+        tvLastSeen = (TextView) findViewById(R.id.tvLastSeen);
         list = (ListView) findViewById(R.id.list);
         imageView = (ImageView) findViewById(R.id.image);
         imgBack = (ImageView) findViewById(R.id.iv_back_chat);
@@ -309,6 +333,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 Message msg = (Message) chatAdapter.getItem(position);
                 if (msg.type == Message.MessageType.Photo) {
                     showSaveAlertDialog(position);
+                } else if (msg.type == Message.MessageType.Text) {
+                    openMessageDeleteSelectionSheet(dialog.occupantsIds.get(0), msg.key, position);
                 }
                 return true;
             }
@@ -337,6 +363,30 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         });
 
         initCustomKeyboard();
+    }
+
+    public void removeMessage(final String userID, final String key, final int position) {
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(ChatActivity.this);
+        builder.setTitle("Delete Message")
+                .setMessage("Are you sure you want to delete this message?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        FirebaseManager.getInstance().removeSingleMessage(userID, key);
+                        messages.remove(position);
+                        chatAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
     }
 
     public void hideKeyboards() {
@@ -579,8 +629,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     sendChatMessage(editTextMessage.getText().toString(), Message.MessageType.Text);
                     editTextMessage.setText("");
                 } else if (!selectedEmojiName.equals("")) {
-                    String converted = convertAndroidToIos(selectedEmojiName);
-                    sendChatMessage(converted, Message.MessageType.Emoji);
+//                    String converted = convertAndroidToIos(selectedEmojiName);
+//                    sendChatMessage(converted, Message.MessageType.Emoji);
                     selectedEmojiName = "";
                 }
                 break;
@@ -605,6 +655,72 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
             case R.id.layoutCancel:
                 hideAlertMenu();
                 break;
+            case R.id.layoutLocation:
+                hideAlertMenu();
+
+                if (checkLocationPermission()) {
+                    final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+                    if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        buildAlertMessageNoGps();
+                        return;
+                    } else {
+                        mFusedLocationClient.getLastLocation()
+                                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                                    @Override
+                                    public void onSuccess(Location location) {
+                                        // Got last known location. In some rare situations this can be null.
+                                        if (location != null) {
+                                            String locationUrl = String.format("My Location :\n" + "http://maps.google.com/?q=%s,%s", location.getLatitude(), location.getLongitude());
+                                            if (!TextUtils.isEmpty(locationUrl)) {
+                                                sendChatMessage(locationUrl, Message.MessageType.Text);
+                                            }
+                                        }
+                                    }
+                                });
+                    }
+                }
+                break;
+
+            case R.id.layoutDocument:
+                hideAlertMenu();
+                showFileChooser();
+                break;
+
+        }
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void showFileChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(
+                    Intent.createChooser(intent, "Select a File to Upload"),
+                    FILE_SELECT_CODE);
+        } catch (android.content.ActivityNotFoundException ex) {
+            // Potentially direct the user to the Market with a Dialog
+            Toast.makeText(this, "Please install a File Manager.",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -617,8 +733,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void emojiButtonClicked(String emojiString) {
-        Editable text = editTextMessage.getText();
-        text.insert(editTextMessage.getSelectionStart(), "(" + emojiString + ")");
+//        Editable text = editTextMessage.getText();
+//        text.insert(editTextMessage.getSelectionStart(), "(" + emojiString + ")");
+//        String converted = convertAndroidToIos(emojiString);
+        sendChatMessage("(" + emojiString + ")", Message.MessageType.Text);
     }
 
     @Override
@@ -660,7 +778,25 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
                 break;
-
+            case FILE_SELECT_CODE:
+                if (resultCode == RESULT_OK) {
+                    // Get the Uri of the selected file
+                    Uri uri = data.getData();
+                    Log.d(TAG, "File Uri: " + uri.toString());
+                    // Get the path
+                    String path = null;
+                    try {
+                        path = FileUtils.getPath(this, uri);
+                        uploadDocument(uri);
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d(TAG, "File Path: " + path);
+                    // Get the file instance
+                    // File file = new File(path);
+                    // Initiate the upload
+                    break;
+                }
             default:
                 if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
                     Uri uri = data.getData();
@@ -809,6 +945,19 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
+    private void uploadDocument(Uri uri) {
+        progressDialog.show();
+        FirebaseManager.getInstance().uploadDocument(uri, new FirebaseManager.OnStringListener() {
+            @Override
+            public void onStringResponse(String value) {
+                progressDialog.dismiss();
+                if (value != null) {
+                    sendChatMessage(value, Message.MessageType.Text);
+                }
+            }
+        });
+    }
+
     private void sendChatMessage(String text, Message.MessageType messageType) {
         Message message = new Message();
         message.userID = FirebaseManager.getInstance().getCurrentUserID();
@@ -925,6 +1074,15 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
         activityInstance = null;
         FirebaseManager.getInstance().removeMessageListener();
+    }
+
+    public void OnMsgForwardClick(View view) {
+    }
+
+    public void OnCancelClick(View view) {
+        if (bottomdialog.isShowing()) {
+            bottomdialog.dismiss();
+        }
     }
 
     private static class EmoticonHandler implements TextWatcher {
@@ -1046,4 +1204,82 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
             }
         }
     }
+
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.title_location_permission)
+                        .setMessage(R.string.text_location_permission)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(ChatActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void openMessageDeleteSelectionSheet(final String userId, final String key, final int position) {
+        bottomdialog = new BottomSheetDialog(ChatActivity.this);
+        bottomdialog.setContentView(R.layout.dialog_message_delete);
+        final LinearLayout dialogLayout = (LinearLayout) bottomdialog.findViewById(R.id.imageSelectionDialog);
+        TextView tvDelete = (TextView) bottomdialog.findViewById(R.id.tv_delete);
+        TextView tvCopy = (TextView) bottomdialog.findViewById(R.id.tv_Copy);
+        TextView tvForward = (TextView) bottomdialog.findViewById(R.id.tv_forward);
+        FontUtils.setFont(dialogLayout, FontUtils.AvenirLTStdBook);
+        tvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeMessage(userId, key, position);
+                bottomdialog.dismiss();
+            }
+        });
+        tvCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager cManager = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData cData = ClipData.newPlainText("text", messages.get(position).message);
+                cManager.setPrimaryClip(cData);
+                Toast.makeText(ChatActivity.this, "Copied Message", Toast.LENGTH_SHORT).show();
+                bottomdialog.dismiss();
+            }
+        });
+        tvForward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChatActivity.this, HomeActivity.class);
+                intent.putExtra("VIEW", 2);
+                startActivity(intent);
+                bottomdialog.dismiss();
+            }
+        });
+        bottomdialog.show();
+    }
+
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_item_divider_width">5dp</dimen>
+    <dimen name="default_item_radius">3dp</dimen>
+    <dimen name="dp5">5dp</dimen>
+</resources>

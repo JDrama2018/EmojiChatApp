@@ -61,6 +61,7 @@ public class HomeActivity extends BaseActivity {
     private Context mContext;
     private SharedPreferences sharedpreferences;
     private AppConst appConst = new AppConst();
+    private int viewType;
 
     public static HomeActivity getInstance() {
         return activityInstance;
@@ -81,7 +82,13 @@ public class HomeActivity extends BaseActivity {
         bFirstTime = false;
         activityInstance = this;
 
-
+        Intent intent = getIntent();
+        if (intent.hasExtra("VIEW")) {
+            viewType = intent.getExtras().getInt("VIEW");
+            if (viewType == 2) {
+                loadContactFragment();
+            }
+        }
         // Check for App Invite invitations and launch deep-link activity if possible.
         // Requires that an Activity is registered in AndroidManifest.xml to handle
         // deep-link URLs.
@@ -160,11 +167,14 @@ public class HomeActivity extends BaseActivity {
      * @param view
      */
     public void contactOnClick(View view) {
+        loadContactFragment();
+    }
+
+    public void loadContactFragment() {
         ShowCustomBottomContactColor();
         ContactFragment fragment = new ContactFragment();
         loadFragments(fragment, ContactFragment.TAG);
     }
-
 
     /**
      * This method is called when Politica Tab clicked
@@ -310,8 +320,8 @@ public class HomeActivity extends BaseActivity {
 
                             finish();
                         }
-
-                        chatOnClick(null);
+                        if (viewType != 2)
+                            chatOnClick(null);
                     }
                 });
 

@@ -11,6 +11,7 @@ public class Message implements Serializable {
     public MessageType type;
     public String message;
     public long dateSent;
+    public String key;
 
-    public enum MessageType {Text, Emoji, Photo, Video}
+    public enum MessageType {Text, Emoji, Photo, Video, Document}
 }
