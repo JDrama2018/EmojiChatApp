@@ -27,6 +27,8 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
         android:allowBackup="true"
@@ -36,6 +38,8 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".sinchaudiocall.SinchService" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -74,6 +78,7 @@
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -101,7 +106,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.AddUserActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.group.GroupChatActivity"
             android:screenOrientation="portrait"
@@ -159,15 +164,40 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="3ff7d9fa85977bd0922bc880a4521b6a44237db0" />
+            android:value="a1c4a349e92eb0b342dc93dfe94dbd3274f9980f" />
 
-        <activity android:name=".activity.SignUpActivity" />
-        <activity android:name=".activity.VerificationCodeActivity" />
-        <activity android:name=".activity.profile.UserProfileActivity" />
-        <activity android:name=".activity.SignInActivity" />
-        <activity android:name=".activity.SplashScreenActivity">
-
-        </activity>
+        <activity
+            android:name=".activity.SignUpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.VerificationCodeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.profile.UserProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SignInActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SplashScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".sinchaudiocall.CallScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".sinchaudiocall.PlaceCallActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".sinchaudiocall.IncomingCallScreenActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".sinchaudiocall.CallVideoScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.BlockListActivity"
+            android:label="@string/title_activity_block_list"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

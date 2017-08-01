@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -18,22 +17,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dev.wangri.muslimkeyboard.R;
-import com.dev.wangri.muslimkeyboard.bean.User;
 import com.dev.wangri.muslimkeyboard.contryspinner.CountrySpinner;
 import com.dev.wangri.muslimkeyboard.contryspinner.Iso2Phone;
-import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
 import com.dev.wangri.muslimkeyboard.utility.FontUtils;
 import com.dev.wangri.muslimkeyboard.utility.NetworkAvailablity;
-import com.dev.wangri.muslimkeyboard.utility.UsernameExistQueryEventListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.sinch.verification.PhoneNumberFormattingTextWatcher;
 import com.sinch.verification.PhoneNumberUtils;
 
@@ -45,8 +35,6 @@ import butterknife.ButterKnife;
 public class SignInActivity extends AppCompatActivity {
     @BindView(R.id.signInLayout)
     LinearLayout signInLayout;
-    @BindView(R.id.edt_password)
-    EditText edtPassword;
     @BindView(R.id.progressIndicator)
     ProgressBar progressDialog;
     private String mCountryIso;
@@ -59,8 +47,6 @@ public class SignInActivity extends AppCompatActivity {
     EditText mPhoneNumber;
     @BindView(R.id.smsVerificationButton)
     Button mSmsButton;
-    private String strPhoneNumber;
-    private String strUserPassword;
     FirebaseAuth mAuth;
     private SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
@@ -96,7 +82,7 @@ public class SignInActivity extends AppCompatActivity {
         signInService();
     }
 
-    private void signInWithEmail(final String userName, final String userPass) {
+    /*private void signInWithEmail(final String userName, final String userPass) {
         mAuth.signInWithEmailAndPassword(userName, userPass)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -133,7 +119,7 @@ public class SignInActivity extends AppCompatActivity {
 
                         setResult(RESULT_OK);
 
-                        openPhoneConfirmationDialog();
+//                        openPhoneConfirmationDialog();
                     }
                 }).addOnFailureListener(this, new OnFailureListener() {
             @Override
@@ -156,27 +142,26 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         };
-        FirebaseManager.getInstance().getEmailFromUsername(userName, completionHandler);
-    }
+        //FirebaseManager.getInstance().getEmailFromUsername(userName, completionHandler);
+    }*/
 
     private void signInService() {
-        strPhoneNumber = mPhoneNumber.getText().toString().trim();
-        strUserPassword = edtPassword.getText().toString().trim();
-
-        if (TextUtils.isEmpty(strPhoneNumber)) {
+        if (TextUtils.isEmpty(mPhoneNumber.getText().toString())) {
             mPhoneNumber.setError("Please enter valid username or Email id");
 
-        } else if (TextUtils.isEmpty(strUserPassword)) {
-            edtPassword.setError("Please enter the password");
-
-        } else if (strUserPassword.length() < 8 && strUserPassword.length() > 12) {
-            edtPassword.setError("Invalid password");
-
-        } else {
+        }
+//        else if (TextUtils.isEmpty(strUserPassword)) {
+//            edtPassword.setError("Please enter the password");
+//
+//        } else if (strUserPassword.length() < 8 && strUserPassword.length() > 12) {
+//            edtPassword.setError("Invalid password");
+//
+        else {
             if (NetworkAvailablity.getInstance().checkNetworkStatus(SignInActivity.this)) {
                 e164Number = getE164Number();
-                signIn(e164Number, strUserPassword);
-
+                //signIn(e164Number, strUserPassword);
+//                signInWithEmail(String.format("%s@muslimapp.com", e164Number), strUserPassword);
+                openPhoneConfirmationDialog();
             }
         }
     }

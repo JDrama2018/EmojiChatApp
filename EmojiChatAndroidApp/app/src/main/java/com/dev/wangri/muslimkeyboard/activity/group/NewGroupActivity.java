@@ -404,7 +404,7 @@ public class NewGroupActivity extends BaseActivity implements View.OnClickListen
             viewHolder.deleteImageView = (ImageView) view.findViewById(R.id.delete_img);
 
             User user = Util.getInstance().workingFriends.get(position);
-            viewHolder.name.setText(user.firstname + " " + user.lastname);
+            viewHolder.name.setText(user.username);
 
             if (user.photo != null && user.photo.length() > 0) {
                 Picasso.with(context1).load(user.photo).into(viewHolder.circleImageView);

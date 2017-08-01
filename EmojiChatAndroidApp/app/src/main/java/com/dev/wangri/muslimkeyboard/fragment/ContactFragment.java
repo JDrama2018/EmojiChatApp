@@ -21,7 +21,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dev.wangri.muslimkeyboard.R;
-import com.dev.wangri.muslimkeyboard.activity.AddUserActivity;
 import com.dev.wangri.muslimkeyboard.activity.ChatActivity;
 import com.dev.wangri.muslimkeyboard.activity.FriendActivity;
 import com.dev.wangri.muslimkeyboard.activity.HomeActivity;
@@ -242,9 +241,9 @@ public class ContactFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.add_friends:
 //                hideActionMenu();
-//                onInviteClicked();
-                Intent i = new Intent(getActivity(), AddUserActivity.class);
-                startActivity(i);
+                onInviteClicked();
+//                Intent i = new Intent(getActivity(), AddUserActivity.class);
+//                startActivity(i);
 
                 break;
             case R.id.group_chat:
@@ -313,13 +312,13 @@ public class ContactFragment extends Fragment implements View.OnClickListener {
             viewHolder.imgRejectRequest = (ImageView) view.findViewById(R.id.img_reject_friend_request);
             viewHolder.circleImageView = (CircleImageView) view.findViewById(R.id.profile_image);
             User user = FirebaseManager.getInstance().requestList.get(position);
-            viewHolder.name.setText(String.format("%s %s", user.firstname, user.lastname));
+            viewHolder.name.setText(String.format("%s", user.username));
             viewHolder.tv_phoneNumber.setText(String.format("%s", user.username));
 
             viewHolder.imgAcceptRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FirebaseManager.getInstance().acceptFriendRequest(FirebaseManager.getInstance().requestList.get(position).id);
+                    FirebaseManager.getInstance().acceptFriendRequest(FirebaseManager.getInstance().getCurrentUserID(), FirebaseManager.getInstance().requestList.get(position).id);
                     FirebaseManager.getInstance().requestList.remove(position);
                     notifyDataSetChanged();
                 }

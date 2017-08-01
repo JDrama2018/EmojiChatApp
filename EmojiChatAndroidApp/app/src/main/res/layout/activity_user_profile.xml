@@ -87,6 +87,7 @@
             android:id="@+id/txt_personname"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/dp_20"
             android:layout_weight="0.8"
             android:background="#FFFFFF"
             android:hint="@string/enter_name"

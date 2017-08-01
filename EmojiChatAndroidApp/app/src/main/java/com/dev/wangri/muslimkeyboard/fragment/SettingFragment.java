@@ -1,7 +1,9 @@
 package com.dev.wangri.muslimkeyboard.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,6 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SettingFragment extends Fragment implements View.OnClickListener {
     public static final String TAG = ContactFragment.class.getName();
+    public static final String MyPREFERENCES = "MyPrefs";
     private static final int CURRENT_USER_PROFILE_ACTIVITY_REQUEST_CODE = 100;
     boolean bNotiEnable = true;
     View view;
@@ -60,6 +63,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         toggleNoti = (ImageView) view.findViewById(R.id.toggleNoti);
         imvAvatar = (CircleImageView) view.findViewById(R.id.profile_image);
         tvName = (TextView) view.findViewById(R.id.tv_name);
+        SharedPreferences sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        tvName.setText(sharedpreferences.getString("personName", "username"));
     }
 
     private void displaySettings() {
@@ -69,9 +74,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         } else {
             imvAvatar.setImageResource(R.mipmap.profile);
         }
-
-        String name = FirebaseManager.getInstance().getCurrentUserName();
-        tvName.setText(name);
 
         getUserInfo();
     }
@@ -83,7 +85,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 if (user == null) {
                     return;
                 }
-                tvName.setText(user.firstname + " " + user.lastname);
                 bNotiEnable = user.notification;
                 if (bNotiEnable) {
                     toggleNoti.setImageResource(R.mipmap.switch_on);

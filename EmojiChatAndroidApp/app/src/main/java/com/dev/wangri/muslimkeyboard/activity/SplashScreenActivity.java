@@ -22,7 +22,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         ButterKnife.bind(this);
-        FontUtils.setFont(loginLayout,FontUtils.AvenirLTStdBook);
+        FontUtils.setFont(loginLayout, FontUtils.AvenirLTStdBook);
     }
 
     public void OnClickSignIn(View view) {

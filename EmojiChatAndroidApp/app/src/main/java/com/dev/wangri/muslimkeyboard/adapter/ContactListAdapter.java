@@ -101,19 +101,19 @@ public class ContactListAdapter extends BaseAdapter implements SectionIndexer {
         try {
             TextView textRow = (TextView) convertView.findViewById(R.id.tv_name);
             User user = getItem(position);
-            textRow.setText(user.firstname + " " + user.lastname);
+            textRow.setText(user.username);
 
             TextView textLetter = (TextView) convertView.findViewById(R.id.tv_letter);
             textLetter.setText("");
 
             User curUser = getItem(position);
-            String curFirstLetter = curUser.firstname.toLowerCase().substring(0, 1);
+            String curFirstLetter = curUser.username.toLowerCase().substring(0, 1);
             View sectionDivider = (View) convertView.findViewById(R.id.sectionDivider);
             sectionDivider.setVisibility(View.INVISIBLE);
 
             if (position != 0) {
                 User prevUser = getItem(position - 1);
-                String prevFirstLetter = prevUser.firstname.substring(0, 1).toLowerCase();
+                String prevFirstLetter = prevUser.username.substring(0, 1).toLowerCase();
 
                 if (prevFirstLetter.equals(curFirstLetter)) {
                     textLetter.setText("");
@@ -161,7 +161,7 @@ public class ContactListAdapter extends BaseAdapter implements SectionIndexer {
                     String text = null;
                     try {
                         User user = mFilterList.get(j);
-                        text = user.firstname + " " + user.lastname;
+                        text = user.username;
                     } catch (Exception e) {
                     }
                     if (text == null)
@@ -173,7 +173,7 @@ public class ContactListAdapter extends BaseAdapter implements SectionIndexer {
                 String artist = null;
                 try {
                     User user = mFilterList.get(j);
-                    artist = user.firstname + " " + user.lastname;
+                    artist = user.username;
                 } catch (Exception e) {
                 }
                 if (artist == null)
@@ -201,7 +201,7 @@ public class ContactListAdapter extends BaseAdapter implements SectionIndexer {
 
     public class UserNameComparator implements Comparator<User> {
         public int compare(User left, User right) {
-            return left.firstname.compareTo(right.firstname);
+            return left.username.compareTo(right.username);
         }
     }
 }

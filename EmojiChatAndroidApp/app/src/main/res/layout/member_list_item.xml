@@ -37,6 +37,19 @@
             android:padding="10dp"
             android:src="@mipmap/reject" />
 
+        <TextView
+            android:id="@+id/tv_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/green_round_shape"
+            android:padding="10dp"
+            android:text="Admin"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
     </RelativeLayout>
 
 </RelativeLayout>

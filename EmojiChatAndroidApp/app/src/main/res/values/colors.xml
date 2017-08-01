@@ -28,4 +28,9 @@
     <color name="default_indicator_light_off">#777777</color>
     <color name="indicator_selected">#363B3E</color>
     <color name="indicator_normal">#979797</color>
+
+    <!--Call Screen Colors-->
+    <color name="end_call_red">#FF5252</color>
+    <color name="receive_call_green">#00E676</color>
+    <color name="call_screen_dialog_grey">#2E414F</color>
 </resources>

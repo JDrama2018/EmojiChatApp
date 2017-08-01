@@ -159,7 +159,9 @@ public class ChatActivityAdapter extends BaseAdapter {
                 imgLayoutRight.setVisibility(View.VISIBLE);
                 holder.emojiViewSender.setVisibility(View.GONE);
                 holder.imageViewSender.setVisibility(View.VISIBLE);
-                Picasso.with(context).load(message.message).into(holder.imageViewSender);
+                Picasso.with(context)
+                        .load(message.message)
+                        .into(holder.imageViewSender);
                 holder.textViewEmojiSenderTime.setText(DateUtils.formatDateTime(context, message.dateSent * 1000, DateUtils.FORMAT_SHOW_TIME));
             } else {
                 textLayoutLeft.setVisibility(View.GONE);
@@ -168,7 +170,9 @@ public class ChatActivityAdapter extends BaseAdapter {
                 imgLayoutRight.setVisibility(View.GONE);
                 holder.emojiViewwReceiver.setVisibility(View.GONE);
                 holder.imageViewReceiver.setVisibility(View.VISIBLE);
-                Picasso.with(context).load(message.message).into(holder.imageViewReceiver);
+                Picasso.with(context)
+                        .load(message.message)
+                        .into(holder.imageViewReceiver);
                 holder.textViewEmojiReceiverTime.setText(DateUtils.formatDateTime(context, message.dateSent * 1000, DateUtils.FORMAT_SHOW_TIME));
             }
         }
@@ -177,7 +181,7 @@ public class ChatActivityAdapter extends BaseAdapter {
     }
 
     public static class Holder {
-        static TextView textViewSender, textViewReceiver;
+        TextView textViewSender, textViewReceiver;
         ImageView imageViewReceiverProfile, imageViewEmojiReceiverProfile;
         TextView textViewSenderTime, textViewReceiverTime, textViewEmojiSenderTime, textViewEmojiReceiverTime;
         ImageView imageViewReceiver, imageViewSender, emojiViewwReceiver, emojiViewSender;

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.dev.wangri.muslimkeyboard.activity.HomeActivity;
 import com.dev.wangri.muslimkeyboard.bean.Dialog;
@@ -53,6 +54,7 @@ public class FirebaseManager {
     public ArrayList<User> userList = new ArrayList<>();
     public ArrayList<User> searchUserList = new ArrayList<>();
     public ArrayList<User> friendList = new ArrayList<>();
+    public ArrayList<User> blockFriendList = new ArrayList<>();
     public ArrayList<User> groupFriendList = new ArrayList<>();
     public ArrayList<User> requestList = new ArrayList<>();
     public ArrayList<User> sentList = new ArrayList<>();
@@ -66,8 +68,9 @@ public class FirebaseManager {
     private FirebaseChildListener mMessageChildListener;
 
     public static FirebaseManager getInstance() {
-        if (null == mRefrence)
+        if (null == mRefrence) {
             mRefrence = new FirebaseManager();
+        }
         return mRefrence;
     }
 
@@ -155,7 +158,6 @@ public class FirebaseManager {
     }
 
     public void updatePushToken(String pushToken) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         getCurrentUserRef().child("pushToken").setValue(pushToken);
     }
 
@@ -256,6 +258,80 @@ public class FirebaseManager {
                         }
                     }
                 });
+    }
+
+    public void createAccountWithPhoneNumber(final String personName, final String mPhoneNumber, final String photoPath, final OnBooleanListener onSignupResponseListener) {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (photoPath != null) {
+            Uri file = Uri.fromFile(new File(photoPath));
+            StorageReference avatarRef = FirebaseStorage.getInstance().getReference().child("images/avatars/" + user.getUid());
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setContentType("image/jpeg")
+                    .build();
+
+
+            avatarRef.putFile(file, metadata)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            final Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(personName)
+                                    .setPhotoUri(downloadUrl)
+                                    .build();
+                            user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                HashMap<String, Object> userMap = new HashMap<>();
+                                                userMap.put("id", user.getUid());
+                                                userMap.put("username", personName);
+                                                userMap.put("mobile", mPhoneNumber);
+                                                userMap.put("photo", downloadUrl.toString());
+                                                userMap.put("pushToken", FirebaseInstanceId.getInstance().getToken());
+                                                userMap.put("notification", true);
+                                                FirebaseManager.getInstance().getCurrentUserRef().setValue(userMap);
+                                                Log.d(TAG, "User profile updated.");
+                                                onSignupResponseListener.onBooleanResponse(true);
+                                            } else {
+                                                onSignupResponseListener.onBooleanResponse(false);
+                                            }
+                                        }
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            onSignupResponseListener.onBooleanResponse(false);
+                        }
+                    });
+
+        } else {
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(personName)
+                    .build();
+            user.updateProfile(profileUpdates)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                HashMap<String, Object> userMap = new HashMap<>();
+                                userMap.put("id", user.getUid());
+                                userMap.put("username", personName);
+                                userMap.put("mobile", mPhoneNumber);
+                                userMap.put("pushToken", FirebaseInstanceId.getInstance().getToken());
+                                userMap.put("notification", true);
+                                FirebaseManager.getInstance().getCurrentUserRef().setValue(userMap);
+                                Log.d(TAG, "User profile updated.");
+                                onSignupResponseListener.onBooleanResponse(true);
+                            } else {
+                                onSignupResponseListener.onBooleanResponse(false);
+                            }
+                        }
+                    });
+        }
     }
 
     public User getUser(String userID, final OnUserResponseListener onUserResponseListener) {
@@ -595,7 +671,7 @@ public class FirebaseManager {
                                         dialog.photo = user.photo;
                                     else
                                         dialog.photo = "";
-                                    dialog.title = String.format("%s %s", user.firstname, user.lastname);
+                                    dialog.title = String.format("%s", user.username);
                                     if (dialogList.indexOf(dialog) == (dialogList.size() - 1))
                                         refreshChatBadge(onUpdateListener);
                                 }
@@ -629,29 +705,51 @@ public class FirebaseManager {
         mUserRef.child(userID).child("friends").child(mAuth.getCurrentUser().getUid()).setValue(false);
     }
 
-    public void acceptFriendRequest(String userID) {
+    public void acceptFriendRequest(String userID, String friendUserID) {
+        mUserRef.child(userID).child("friends").child(friendUserID).setValue(true);
+        mUserRef.child(friendUserID).child("friends").child(userID).setValue(true);
 
-        for (int i = 0; i < requestList.size(); i++) {
-            User user = requestList.get(i);
-            if (user.id == userID) {
-                SharedPreferences sharedpreferences = HomeActivity.getInstance().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-                String username = sharedpreferences.getString("user_name", "");
-
-                new SendPushTask(Util.pushJsonObjectFrom("", username + " accepted your friend request", user.pushToken)).execute();
-                break;
-            }
-        }
-
-        getCurrentUserRequestsRef().child(userID).removeValue();
-        getCurrentUserFriendsRef().child(userID).setValue(true);
-        mUserRef.child(userID).child("friends").child(mAuth.getCurrentUser().getUid()).setValue(true);
-//        mUserRef.child(userID).child("requests").child(mAuth.getCurrentUser().getUid()).removeValue();
-        mUserRef.child(userID).child("sentRequests").child(mAuth.getCurrentUser().getUid()).removeValue();
     }
 
     public void blockUser(String userID) {
         mUserRef.child(userID).child("blockedUser").child(mAuth.getCurrentUser().getUid()).setValue(true);
         mUserRef.child(mAuth.getCurrentUser().getUid()).child("blockedUser").child(userID).setValue(true);
+    }
+
+    public void unBlockUser(String userID) {
+        mUserRef.child(userID).child("blockedUser").child(mAuth.getCurrentUser().getUid()).removeValue();
+        mUserRef.child(mAuth.getCurrentUser().getUid()).child("blockedUser").child(userID).removeValue();
+    }
+
+    public FirebaseValueListener getBlockUserList(final OnUpdateListener onUpdateListener) {
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                blockFriendList.clear();
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String id = userSnapshot.getKey();
+                    getUser(id, new OnUserResponseListener() {
+                        @Override
+                        public void onUserResponse(User user) {
+                            blockFriendList.add(user);
+                            onUpdateListener.onUpdate();
+                        }
+                    });
+                }
+
+                if (dataSnapshot.getChildrenCount() == 0) {
+                    onUpdateListener.onUpdate();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                onUpdateListener.onUpdate();
+            }
+        };
+        Query query = getCurrentUserRef().child("blockedUser");
+        query.addValueEventListener(valueEventListener);
+        return new FirebaseValueListener(query, valueEventListener);
     }
 
     public void markAsRead(String dialogID) {
@@ -833,7 +931,7 @@ public class FirebaseManager {
         }
     }
 
-    public void removeSingleMessage(String userId, final String key) {
+    public void removeSingleMessage(final Context chatActivity, String userId, final String key) {
 
         getIndividualRoomID(userId, new OnStringListener() {
             @Override
@@ -855,7 +953,7 @@ public class FirebaseManager {
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                        Toast.makeText(chatActivity, "message has been removed", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

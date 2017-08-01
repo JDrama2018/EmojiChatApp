@@ -458,7 +458,9 @@ public class GroupEditActivity extends BaseActivity implements View.OnClickListe
             viewHolder.deleteImageView.setTag(String.valueOf(position));
 
             User user = Util.getInstance().workingGroupMember.get(position);
-
+//            if ((!TextUtils.isEmpty(dialog.adminId)) && dialog.adminId.equals(FirebaseManager.getInstance().getCurrentUserID())) {
+//
+//            }
             viewHolder.deleteImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -475,7 +477,7 @@ public class GroupEditActivity extends BaseActivity implements View.OnClickListe
                 }
             });
 
-            viewHolder.name.setText(user.firstname + " " + user.lastname);
+            viewHolder.name.setText(user.username);
 
             if (user.photo != null && user.photo.length() > 0) {
                 Picasso.with(context1).load(user.photo).into(viewHolder.circleImageView);

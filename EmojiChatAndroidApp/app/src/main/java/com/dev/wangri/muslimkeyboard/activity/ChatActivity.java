@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -23,6 +24,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.Spanned;
@@ -54,7 +56,10 @@ import com.dev.wangri.muslimkeyboard.adapter.ViewPagerIndicator;
 import com.dev.wangri.muslimkeyboard.bean.Dialog;
 import com.dev.wangri.muslimkeyboard.bean.Message;
 import com.dev.wangri.muslimkeyboard.bean.User;
-import com.dev.wangri.muslimkeyboard.utility.BaseActivity;
+import com.dev.wangri.muslimkeyboard.sinchaudiocall.BaseActivity;
+import com.dev.wangri.muslimkeyboard.sinchaudiocall.CallScreenActivity;
+import com.dev.wangri.muslimkeyboard.sinchaudiocall.CallVideoScreenActivity;
+import com.dev.wangri.muslimkeyboard.sinchaudiocall.SinchService;
 import com.dev.wangri.muslimkeyboard.utility.FileUtils;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
 import com.dev.wangri.muslimkeyboard.utility.FontUtils;
@@ -65,6 +70,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.sinch.android.rtc.MissingPermissionException;
+import com.sinch.android.rtc.calling.Call;
 import com.soundcloud.android.crop.Crop;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -81,6 +88,9 @@ import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.MultiCallback;
 
 import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * This activity class is used for handling all the functionality regarding chat including receiving
@@ -96,6 +106,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private final static int ALL_PERMISSIONS_RESULT = 107;
     private static final int FILE_SELECT_CODE = 108;
     private static final String TAG = ChatActivity.class.getSimpleName();
+    private static final int AUDIO_CALL = 0;
+    private static final int VIDEO_CALL = 1;
     private static ChatActivity activityInstance = null;
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -114,7 +126,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     LinearLayout customKeyboardLayout;
     View.OnTouchListener otl;
     private String selectedEmojiName = "";
-    private ImageView imgBack;
+    private ImageView imgBack, img_videoCall, img_audioCall;
     private CircleImageView imgProfile;
     private ArrayList<Message> messages = new ArrayList<>();
     private ViewPager viewPager;
@@ -172,6 +184,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private int position;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private BottomSheetDialog bottomdialog;
+    private String mCurrentPhotoPath;
 
     public static ChatActivity getInstance() {
         return activityInstance;
@@ -181,8 +194,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
         permissions.add(CAMERA);
+        permissions.add(RECORD_AUDIO);
+        permissions.add(READ_EXTERNAL_STORAGE);
+        permissions.add(WRITE_EXTERNAL_STORAGE);
         permissionsToRequest = findUnAskedPermissions(permissions);
         //get the permissions we have asked for before but are not granted..
         //we will store this in a global list to access later.
@@ -207,7 +222,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 finish();
             }
             chatNameHead.setText(dialog.title);
-            tvLastSeen.setText(DateUtils.formatDateTime(ChatActivity.this, dialog.lastSeenDate, DateUtils.FORMAT_SHOW_TIME));
+            tvLastSeen.setText(String.format("Last seen %s", DateUtils.formatDateTime(ChatActivity.this, dialog.lastSeenDate, DateUtils.FORMAT_SHOW_TIME)));
             if (dialog.photo != null && dialog.photo.length() > 0) {
                 Picasso.with(this).load(dialog.photo).into(imgProfile);
             } else {
@@ -232,11 +247,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
         super.onBackPressed();
         FirebaseManager.getInstance().removeMessageListener();
-    }
-
-    @Override
-    protected void initUI() {
-
     }
 
     /**
@@ -289,11 +299,15 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         list = (ListView) findViewById(R.id.list);
         imageView = (ImageView) findViewById(R.id.image);
         imgBack = (ImageView) findViewById(R.id.iv_back_chat);
+        img_videoCall = (ImageView) findViewById(R.id.img_videoCall);
+        img_audioCall = (ImageView) findViewById(R.id.img_audioCall);
         imgProfile = (CircleImageView) findViewById(R.id.iv_profile);
         imgAttach = (ImageView) findViewById(R.id.attechment_file);
         imgViewSend.setOnClickListener(this);
         imgAttach.setOnClickListener(this);
         imgProfile.setOnClickListener(this);
+        img_audioCall.setOnClickListener(this);
+        img_videoCall.setOnClickListener(this);
         registerForContextMenu(imgAttach);
 
         selectEmoji.setOnClickListener(new View.OnClickListener() {
@@ -373,7 +387,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
-                        FirebaseManager.getInstance().removeSingleMessage(userID, key);
+                        FirebaseManager.getInstance().removeSingleMessage(ChatActivity.this, userID, key);
                         messages.remove(position);
                         chatAdapter.notifyDataSetChanged();
                     }
@@ -647,6 +661,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 hideAlertMenu();
                 Intent dataBack = new Intent("android.media.action.IMAGE_CAPTURE");
                 startActivityForResult(dataBack, CAMERA_REQUEST);
+
+//                dispatchTakePictureIntent();
                 break;
             case R.id.layoutChoosePhoto:
                 hideAlertMenu();
@@ -685,6 +701,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
             case R.id.layoutDocument:
                 hideAlertMenu();
                 showFileChooser();
+                break;
+            case R.id.img_audioCall:
+                callButtonClicked(ChatActivity.AUDIO_CALL);
+                break;
+            case R.id.img_videoCall:
+                callButtonClicked(ChatActivity.VIDEO_CALL);
                 break;
 
         }
@@ -767,16 +789,21 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+//            case CAMERA_REQUEST:
             case CAMERA_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
                     try {
-                        yourSelectedImage = (Bitmap) data.getExtras().get("data");
+                        Bitmap yourSelectedImage = (Bitmap) data.getExtras().get("data");
                         Uri tempUri = Util.getInstance().getImageUri(this, yourSelectedImage);
-                        uploadPhoto(tempUri);
+                        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                        File output = new File(dir, "camera.jpg");
+                        Uri outputUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", output);
+                        Crop.of(tempUri, outputUri).asSquare().start(this);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
+
                 break;
             case FILE_SELECT_CODE:
                 if (resultCode == RESULT_OK) {
@@ -792,28 +819,60 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                         e.printStackTrace();
                     }
                     Log.d(TAG, "File Path: " + path);
-                    // Get the file instance
-                    // File file = new File(path);
-                    // Initiate the upload
                     break;
                 }
+
             default:
                 if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-                    Uri uri = data.getData();
-
-                    try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                        // Log.d(TAG, String.valueOf(bitmap));
-                        yourSelectedImage = bitmap;
-                        Uri tempUri = Util.getInstance().getImageUri(this, yourSelectedImage);
-                        uploadPhoto(tempUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    beginCrop(data.getData());
+                } else if (requestCode == Crop.REQUEST_CROP) {
+                    handleCrop(resultCode, data);
                 }
+//                break;
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * This method is used to handle crop
+     *
+     * @param source
+     */
+    private void beginCrop(Uri source) {
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        Crop.of(source, destination).asSquare().start(this);
+    }
+
+    /*
+     Handling crop functionality of user profile image
+      */
+    private void handleCrop(int resultCode, Intent result) {
+        if (resultCode == RESULT_OK) {
+            try {
+                final Bitmap yourSelectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Crop.getOutput(result));
+                Bitmap resizedBitmap = getResizedBitmap(yourSelectedImage, 300, 300);
+                Uri tempUri = Util.getInstance().getImageUri(this, resizedBitmap);
+                uploadPhoto(tempUri);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,
+                matrix, false);
+
+        return resizedBitmap;
     }
 
     @Override
@@ -837,23 +896,23 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    private void beginCrop(Uri source) {
-        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
-        Crop.of(source, destination).asSquare().start(this);
-    }
+    /* private void beginCrop(Uri source) {
+         Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+         Crop.of(source, destination).asSquare().start(this);
+     }
 
-    private void handleCrop(int resultCode, Intent result) {
-        if (resultCode == RESULT_OK) {
-            try {
-                uploadPhoto(Crop.getOutput(result));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (resultCode == Crop.RESULT_ERROR) {
-            // Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
+     private void handleCrop(int resultCode, Intent result) {
+         if (resultCode == RESULT_OK) {
+             try {
+                 uploadPhoto(Crop.getOutput(result));
+             } catch (Exception e) {
+                 e.printStackTrace();
+             }
+         } else if (resultCode == Crop.RESULT_ERROR) {
+             // Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
+         }
+     }
+ */
     private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted) {
         ArrayList<String> result = new ArrayList<String>();
 
@@ -893,7 +952,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
         switch (requestCode) {
-
             case ALL_PERMISSIONS_RESULT:
                 for (Object perms : permissionsToRequest) {
                     if (hasPermission(perms)) {
@@ -903,9 +961,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                         permissionsRejected.add(perms);
                     }
                 }
-
                 if (permissionsRejected.size() > 0) {
-
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (shouldShowRequestPermissionRationale((String) permissionsRejected.get(0))) {
@@ -924,9 +980,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                             return;
                         }
                     }
-
                 }
-
                 break;
         }
 
@@ -1076,8 +1130,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         FirebaseManager.getInstance().removeMessageListener();
     }
 
-    public void OnMsgForwardClick(View view) {
-    }
 
     public void OnCancelClick(View view) {
         if (bottomdialog.isShowing()) {
@@ -1203,6 +1255,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 }
             }
         }
+
     }
 
     public boolean checkLocationPermission() {
@@ -1282,4 +1335,37 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         bottomdialog.show();
     }
 
+    private void callButtonClicked(int callType) {
+        String userName = dialog.occupantsIds.get(0);
+        if (userName.isEmpty()) {
+            Toast.makeText(this, "Please enter a user to call", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        try {
+            Call call = null;
+            Intent callScreen = null;
+            if (callType == AUDIO_CALL) {
+                call = getSinchServiceInterface().callUser(userName);
+                callScreen = new Intent(this, CallScreenActivity.class);
+            } else if (callType == VIDEO_CALL) {
+                call = getSinchServiceInterface().callUserVideo(userName);
+                callScreen = new Intent(this, CallVideoScreenActivity.class);
+            }
+            if (call == null) {
+                // Service failed for some reason, show a Toast and abort
+                Toast.makeText(this, "Service is not started. Try stopping the service and starting it again before "
+                        + "placing a call.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            String callId = call.getCallId();
+            callScreen.putExtra(SinchService.CALL_ID, callId);
+            callScreen.putExtra(SinchService.CALLER_NAME, dialog.title);
+            callScreen.putExtra(SinchService.CALLER_PHOTO, dialog.photo);
+            startActivity(callScreen);
+        } catch (MissingPermissionException e) {
+            ActivityCompat.requestPermissions(this, new String[]{e.getRequiredPermission()}, 0);
+        }
+
+    }
 }

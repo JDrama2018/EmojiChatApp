@@ -90,6 +90,8 @@
             android:id="@+id/phoneNumber"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginRight="@dimen/dp_20"
             android:layout_weight="0.8"
             android:background="#FFFFFF"
             android:hint="@string/number_phone"
@@ -106,34 +108,6 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/gray" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:gravity="center_vertical"
-            android:text="@string/password"
-            android:textColor="@color/black" />
-
-
-        <EditText
-            android:id="@+id/edt_password"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            android:background="#FFFFFF"
-            android:hint="@string/create_password"
-            android:inputType="textPassword"
-            android:padding="5dp"
-            android:textAppearance="?android:textAppearanceSmall" />
-    </LinearLayout>
 
     <View
         android:layout_width="match_parent"

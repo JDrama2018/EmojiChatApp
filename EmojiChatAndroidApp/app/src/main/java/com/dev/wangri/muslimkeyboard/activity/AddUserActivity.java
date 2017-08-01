@@ -3,7 +3,6 @@ package com.dev.wangri.muslimkeyboard.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -30,8 +29,6 @@ import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -206,7 +203,7 @@ public class AddUserActivity extends AppCompatActivity implements View.OnClickLi
             } else
                 viewHolder.circleImageView.setImageResource(R.mipmap.profile);
 
-            viewHolder.name.setText(FirebaseManager.getInstance().searchUserList.get(position).firstname + " " + FirebaseManager.getInstance().searchUserList.get(position).lastname);
+            viewHolder.name.setText(FirebaseManager.getInstance().searchUserList.get(position).username );
             viewHolder.phoneNumber.setText(FirebaseManager.getInstance().searchUserList.get(position).username);
 
             viewHolder.imgSendRequest.setOnClickListener(new View.OnClickListener() {
@@ -214,7 +211,7 @@ public class AddUserActivity extends AppCompatActivity implements View.OnClickLi
                 public void onClick(View v) {
                     ArrayList<User> tmpList = FirebaseManager.getInstance().searchUserList;
                     User u = tmpList.get(position);
-                    FirebaseManager.getInstance().blockUser(u.id);
+
                     SharedPreferences sharedpreferences = HomeActivity.getInstance().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
                     String username = sharedpreferences.getString("user_name", "");
 

@@ -41,8 +41,6 @@ public class SignUpActivity extends AppCompatActivity {
     Button mSmsButton;
     @BindView(R.id.signUpLayout)
     LinearLayout signUpLayout;
-    @BindView(R.id.edt_password)
-    EditText edtPassword;
     @BindView(R.id.progressIndicator)
     ProgressBar progressIndicator;
     private String mCountryIso;
@@ -122,21 +120,12 @@ public class SignUpActivity extends AppCompatActivity {
     public void OnsignUpClick(View view) {
 
         strPhoneNumber = mPhoneNumber.getText().toString().trim();
-        strUserPassword = edtPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(strPhoneNumber)) {
             mPhoneNumber.setError("Please enter valid phone");
-
-        } else if (TextUtils.isEmpty(strUserPassword)) {
-            edtPassword.setError("Please enter the password");
-
-        } else if (strUserPassword.length() < 8 && strUserPassword.length() > 12) {
-            edtPassword.setError("Invalid password");
-
         } else {
             if (NetworkAvailablity.getInstance().checkNetworkStatus(SignUpActivity.this)) {
                 openPhoneConfirmationDialog();
-
             }
         }
 
@@ -165,7 +154,6 @@ public class SignUpActivity extends AppCompatActivity {
                 Intent intent = new Intent(SignUpActivity.this, VerificationCodeActivity.class);
                 intent.putExtra(Intent.EXTRA_PHONE_NUMBER, e164Number);
                 intent.putExtra(Intent.EXTRA_TITLE, "SignUp");
-                intent.putExtra(Intent.EXTRA_TEXT, strUserPassword);
                 startActivity(intent);
                 dialog.dismiss();
                 finish();

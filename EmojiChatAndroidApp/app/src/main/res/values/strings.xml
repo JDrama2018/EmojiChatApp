@@ -92,4 +92,8 @@
     <string name="text_location_permission">Allow location permission to send your location to your friend</string>
     <string name="ok">ok</string>
     <string name="copy">Copy</string>
+    <string name="speaker">Speaker</string>
+    <string name="mute">Mute</string>
+    <string name="video_call">Video Call</string>
+    <string name="title_activity_block_list">BlockListActivity</string>
 </resources>

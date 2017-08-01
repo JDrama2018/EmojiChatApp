@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,19 +26,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dev.wangri.muslimkeyboard.BuildConfig;
 import com.dev.wangri.muslimkeyboard.R;
+import com.dev.wangri.muslimkeyboard.activity.ChatActivity;
 import com.dev.wangri.muslimkeyboard.activity.HomeActivity;
 import com.dev.wangri.muslimkeyboard.constants.FileUtil;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
 import com.dev.wangri.muslimkeyboard.utility.FontUtils;
-import com.dev.wangri.muslimkeyboard.utility.UsernameExistQueryEventListener;
 import com.dev.wangri.muslimkeyboard.utility.Util;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +50,7 @@ import static android.Manifest.permission.CAMERA;
 
 public class UserProfileActivity extends AppCompatActivity {
 
+    private static final String TAG = UserProfileActivity.class.getSimpleName();
     @BindView(R.id.txt_back)
     TextView txtBack;
     @BindView(R.id.img_userprofile)
@@ -71,13 +75,10 @@ public class UserProfileActivity extends AppCompatActivity {
     private ArrayList permissionsRejected = new ArrayList();
     private ArrayList<String> permissions = new ArrayList<>();
     private Bitmap yourSelectedImage;
-    private String tempFilePath = "";
+    private String tempFilePath = null;
     private String mPhoneNumber;
-    private String mPassword;
-    private String strFirstName;
-    private String strLastName;
-    private String strEmail;
     public static final String MyPREFERENCES = "MyPrefs";
+    private String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,7 @@ public class UserProfileActivity extends AppCompatActivity {
         FontUtils.setFont(userProfileLayout, FontUtils.AvenirLTStdBook);
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         mPhoneNumber = getIntent().getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-        mPassword = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+//        mPassword = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         permissions.add(CAMERA);
         permissionsToRequest = findUnAskedPermissions(permissions);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -127,62 +128,48 @@ public class UserProfileActivity extends AppCompatActivity {
                 openImageSelectionSheet();
                 break;
             case R.id.btn_next:
-                signUpUser();
+                signUpUserWIthPhoneAuth();
                 break;
         }
     }
 
-    private void signUpUser() {
-        String[] splited = txtPersonname.getText().toString().split("\\s+");
-        strFirstName = splited[0];
-        strLastName = splited[1];
-        strEmail = mPhoneNumber + "@muslimapp.com";
-        progressDialog.setVisibility(View.VISIBLE);
-//        if (android.util.Patterns.EMAIL_ADDRESS.matcher(strEmail).matches()) {
+    private void signUpUserWIthPhoneAuth() {
+        final String personName = txtPersonname.getText().toString();
+        if (!TextUtils.isEmpty(personName)) {
+            progressDialog.setVisibility(View.VISIBLE);
+            FirebaseManager.getInstance().createAccountWithPhoneNumber(personName, mPhoneNumber, tempFilePath, new FirebaseManager.OnBooleanListener() {
+                @Override
+                public void onBooleanResponse(boolean success) {
+                    if (success) {
+                        progressDialog.setVisibility(View.INVISIBLE);
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.putString("session", "login");
+                        editor.putString("personName", personName);
+                        editor.putString("push_token", FirebaseInstanceId.getInstance().getToken());
+                        editor.apply();
 
-        UsernameExistQueryEventListener completionHandler = new UsernameExistQueryEventListener() {
-            @Override
-            public void onUsernameQueryDone(Boolean bSuccess, String email) {
-                if (bSuccess) {
-                    progressDialog.setVisibility(View.INVISIBLE);
-                    Toast.makeText(UserProfileActivity.this, "Username is already exist.", Toast.LENGTH_SHORT).show();
-                } else {
-                    FirebaseManager.getInstance().createAccount(UserProfileActivity.this, strFirstName, strLastName, strEmail, mPassword, mPhoneNumber, "", tempFilePath,
-                            new FirebaseManager.OnBooleanListener() {
-                                @Override
-                                public void onBooleanResponse(boolean success) {
-                                    progressDialog.setVisibility(View.INVISIBLE);
-                                    if (success) {
-                                        FirebaseDatabase.getInstance().getReference().child("usernameEmailLink").child(mPhoneNumber.toLowerCase()).setValue(strEmail);
+                        FirebaseManager.getInstance().updatePushToken(FirebaseInstanceId.getInstance().getToken());
 
-                                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                                        editor.putString("session", "login");
-                                        editor.putString("user_email", strEmail);
-                                        editor.putString("user_pass", mPassword);
-                                        editor.putString("push_token", FirebaseInstanceId.getInstance().getToken());
-                                        editor.apply();
-
-                                        FirebaseManager.getInstance().updatePushToken(FirebaseInstanceId.getInstance().getToken());
-
-                                        Intent i = new Intent(UserProfileActivity.this, HomeActivity.class);
-                                        startActivity(i);
-                                        finish();
-                                    } else {
-                                        Toast.makeText(UserProfileActivity.this, "SignUp failed", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+                        Intent i = new Intent(UserProfileActivity.this, HomeActivity.class);
+                        startActivity(i);
+                        finish();
+                    } else {
+                        Toast.makeText(UserProfileActivity.this, "SignUp failed", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        };
-        FirebaseManager.getInstance().getEmailFromUsername(mPhoneNumber, completionHandler);
-//        } else {
-//            edtEmail.setError("Please enter a valid email address");
-//        }
+            });
+
+        } else {
+            txtPersonname.setError("Please enter name");
+            progressDialog.setVisibility(View.INVISIBLE);
+        }
+
     }
 
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
 
         switch (requestCode) {
 
@@ -346,4 +333,47 @@ public class UserProfileActivity extends AppCompatActivity {
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            photoFile = createImageFile();
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(UserProfileActivity.this,
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        createImageFile());
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+            }
+        }
+    }
+
+
+    private File createImageFile() {
+        File image = null;
+        try {
+            // Create an image file name
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File storageDir = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DCIM), "Camera");
+            image = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".jpg",         /* suffix */
+                    storageDir      /* directory */
+            );
+
+            // Save a file: path for use with ACTION_VIEW intents
+            mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return image;
+
+    }
+
 }

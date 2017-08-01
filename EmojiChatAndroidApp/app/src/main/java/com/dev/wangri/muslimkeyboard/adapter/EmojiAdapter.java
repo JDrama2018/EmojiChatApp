@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class EmojiAdapter extends BaseAdapter {
     private int categoryIndex, pageIndex;
-    private ArrayList<String> itemResAry = new ArrayList<>();
+    private ArrayList itemResAry = new ArrayList<>();
     private Context mContext;
 
     public EmojiAdapter(Context context, int cateIndex, int pgIndex) {

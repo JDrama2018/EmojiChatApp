@@ -213,7 +213,7 @@ public class GroupAddActivity extends BaseActivity implements View.OnClickListen
         @Override
         public void onBindViewHolder(GroupMemberViewHolder viewHolder, final int i) {
             User user = Util.getInstance().workingFriends.get(i);
-            viewHolder.name.setText(user.firstname);
+            viewHolder.name.setText(user.username);
 
             if (user.photo != null && user.photo.length() > 0) {
                 Picasso.with(context1).load(user.photo).into(viewHolder.circleImageView);

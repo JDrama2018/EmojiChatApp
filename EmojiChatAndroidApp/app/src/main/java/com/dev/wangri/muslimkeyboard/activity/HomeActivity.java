@@ -22,29 +22,27 @@ import com.dev.wangri.muslimkeyboard.fragment.ChatListFragment;
 import com.dev.wangri.muslimkeyboard.fragment.ContactFragment;
 import com.dev.wangri.muslimkeyboard.fragment.EmojiFragment;
 import com.dev.wangri.muslimkeyboard.fragment.SettingFragment;
+import com.dev.wangri.muslimkeyboard.sinchaudiocall.BaseActivity;
+import com.dev.wangri.muslimkeyboard.sinchaudiocall.SinchService;
 import com.dev.wangri.muslimkeyboard.utility.AdmobInterstitial;
 import com.dev.wangri.muslimkeyboard.utility.AppConst;
-import com.dev.wangri.muslimkeyboard.utility.BaseActivity;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
-import com.dev.wangri.muslimkeyboard.utility.UI.ProgressDialogFragment;
 import com.dev.wangri.muslimkeyboard.utility.Util;
 import com.dev.wangri.muslimkeyboard.utility.models.FirebaseValueListener;
 import com.google.android.gms.appinvite.AppInviteInvitation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.appinvite.FirebaseAppInvite;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
+import com.sinch.android.rtc.SinchError;
 
 import java.util.TimerTask;
 
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements SinchService.StartFailedListener {
     public static final int REQUEST_INVITE = 201;
     public static final String MyPREFERENCES = "MyPrefs";
     private static final String TAG = HomeActivity.class.getSimpleName();
@@ -113,7 +111,7 @@ public class HomeActivity extends BaseActivity {
                             Log.d(TAG, "onSuccess() invitationId " + invitationId);
                         }
                         if (!token.equals(FirebaseManager.getInstance().getCurrentUserID()))
-                            FirebaseManager.getInstance().acceptFriendRequest(token);
+                            FirebaseManager.getInstance().acceptFriendRequest(FirebaseManager.getInstance().getCurrentUserID(),token);
                         // Handle the deep link
                         // ...
                     }
@@ -126,10 +124,6 @@ public class HomeActivity extends BaseActivity {
                 });
     }
 
-    @Override
-    protected void initUI() {
-
-    }
 
     /**
      * This method is used to change color of home button when click Home Tab
@@ -292,39 +286,9 @@ public class HomeActivity extends BaseActivity {
 
             finish();
         }
-
+        if (viewType != 2)
+            chatOnClick(null);
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        String email = sharedpreferences.getString("user_email", "");
-        String pass = sharedpreferences.getString("user_pass", "");
-
-        ProgressDialogFragment.show(getSupportFragmentManager());
-        mAuth.signInWithEmailAndPassword(email, pass)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        ProgressDialogFragment.hide(getSupportFragmentManager());
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-
-                            Toast.makeText(HomeActivity.this, task.getException().getLocalizedMessage(),
-                                    Toast.LENGTH_SHORT).show();
-
-                            SharedPreferences.Editor editor = sharedpreferences.edit();
-                            editor.remove("session");
-                            editor.remove("user_email");
-                            editor.remove("user_pass");
-                            editor.apply();
-
-                            finish();
-                        }
-                        if (viewType != 2)
-                            chatOnClick(null);
-                    }
-                });
-
         friendRequestsListener = FirebaseManager.getInstance().addRequestListener(new FirebaseManager.OnUpdateListener() {
             @Override
             public void onUpdate() {
@@ -413,5 +377,27 @@ public class HomeActivity extends BaseActivity {
             }
         }
     }
+
+    @Override
+    protected void onServiceConnected() {
+        Log.d(TAG, "onServiceConnected() called");
+        getSinchServiceInterface().setStartListener(this);
+        if (!getSinchServiceInterface().isStarted()) {
+            getSinchServiceInterface().startClient(FirebaseManager.getInstance().getCurrentUserID());
+        }
+    }
+
+    @Override
+    public void onStartFailed(SinchError error) {
+        Log.d(TAG, "onStartFailed() called with: error = [" + error + "]");
+        Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onStarted() {
+        Log.d(TAG, "onStarted() called");
+
+    }
+
 }
 

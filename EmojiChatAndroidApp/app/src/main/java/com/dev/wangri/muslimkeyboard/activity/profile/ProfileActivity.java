@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.dev.wangri.muslimkeyboard.R;
-import com.dev.wangri.muslimkeyboard.activity.HomeActivity;
 import com.dev.wangri.muslimkeyboard.bean.Dialog;
 import com.dev.wangri.muslimkeyboard.bean.User;
 import com.dev.wangri.muslimkeyboard.utility.BaseActivity;
@@ -26,9 +25,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends BaseActivity implements View.OnClickListener {
     CircleImageView imvAvatar;
-    TextView tvName;
     TextView tvFullname;
-    TextView tvUsername;
+    TextView tvMobile;
     TextView tvLastSeen;
     String userID;
     private TextView tvRemoveFriend;
@@ -55,9 +53,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void initUI() {
         imvAvatar = (CircleImageView) findViewById(R.id.profile_image);
-        tvName = (TextView) findViewById(R.id.tv_name);
         tvFullname = (TextView) findViewById(R.id.tv_fullname);
-        tvUsername = (TextView) findViewById(R.id.tv_username);
+        tvMobile = (TextView) findViewById(R.id.tv_mobile);
         tvLastSeen = (TextView) findViewById(R.id.tv_lastSeen);
         tvRemoveFriend = (TextView) findViewById(R.id.tv_removeFriend);
         tvRemoveFriend.setOnClickListener(this);
@@ -73,17 +70,20 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             case R.id.tv_removeFriend:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Remove Friend")
-                        .setMessage("Are you sure you want to remove friend?")
+                        .setMessage("Are you sure you want to block friend?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+
+                                FirebaseManager.getInstance().blockUser(userID);
                                 // continue with delete
-                                FirebaseManager.getInstance().removeDialog(userDialog); // removed chat history
+                               /* FirebaseManager.getInstance().removeDialog(userDialog); // removed chat history
                                 FirebaseManager.getInstance().dialogList.remove(position);
                                 FirebaseManager.getInstance().removeFriend(userID); // removed linked user from firebase database
                                 Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                 startActivity(intent);
-                                finish();
+                                finish()*/
+                                ;
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -114,11 +114,9 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                     Picasso.with(ProfileActivity.this).load(user.photo).into(imvAvatar);
                 }
 
-                tvUsername.setText(user.username);
-                tvFullname.setText(user.firstname + " " + user.lastname);
-                tvName.setText(user.firstname + " " + user.lastname);
-
-
+                tvFullname.setText(user.username);
+                tvMobile.setText(user.mobile);
+                
                 Object objAry[] = user.dialogs.values().toArray();
                 long latestTime;
                 if (objAry.length == 0) {

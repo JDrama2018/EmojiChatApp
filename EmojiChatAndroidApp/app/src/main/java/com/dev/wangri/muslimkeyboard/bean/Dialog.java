@@ -28,7 +28,7 @@ public class Dialog implements Serializable {
     public static Dialog createIndividualDialog(User user) {
         Dialog dialog = new Dialog();
         dialog.type = DialogType.Individual;
-        dialog.title = user.firstname + " " + user.lastname;
+        dialog.title = user.username;
         dialog.photo = user.photo;
         dialog.adminId = "";
         dialog.dialogID = FirebaseManager.getInstance().getIndividualDialogID(user.username);

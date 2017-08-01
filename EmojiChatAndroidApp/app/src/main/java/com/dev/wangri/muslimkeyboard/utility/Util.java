@@ -210,7 +210,7 @@ public class Util {
         builder.append(s);
 
         boolean bOnlyEmoji = bIsOnlyEmoji(s);
-        int emojiSize = 120;
+        int emojiSize = 200;
 
         for (index = 0; index < builder.length(); index++) {
             for (Map.Entry<String, Integer> entry : emoticons.entrySet()) {
@@ -359,4 +359,6 @@ public class Util {
         }
         return null;
     }
+
+
 }

@@ -17,15 +17,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dev.wangri.muslimkeyboard.R;
+import com.dev.wangri.muslimkeyboard.activity.BlockListActivity;
 import com.dev.wangri.muslimkeyboard.activity.ChangePwdActivity;
 import com.dev.wangri.muslimkeyboard.bean.User;
 import com.dev.wangri.muslimkeyboard.constants.FileUtil;
 import com.dev.wangri.muslimkeyboard.utility.BaseActivity;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
 import com.dev.wangri.muslimkeyboard.utility.Util;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.soundcloud.android.crop.Crop;
 import com.squareup.picasso.Picasso;
 
@@ -38,13 +40,12 @@ import java.io.File;
 public class CurrentUserProfileActivity extends BaseActivity implements View.OnClickListener {
     public static final String MyPREFERENCES = "MyPrefs";
     static final int CAMERA_REQUEST = 102;
-    private final static int ALL_PERMISSIONS_RESULT = 107;
     ImageView imvAvatar;
-    TextView tvFullname, tvEmail;
+    TextView tvFullname;
     User user;
     LinearLayout changePhotoLayout;
     RelativeLayout overlayLayout;
-    private TextView tvName;
+    private TextView tvPhoneNumber;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,13 +71,11 @@ public class CurrentUserProfileActivity extends BaseActivity implements View.OnC
 
         findViewById(R.id.iv_back).setOnClickListener(this);
         findViewById(R.id.changePhotoLayout).setOnClickListener(this);
-        findViewById(R.id.changePasswordLayout).setOnClickListener(this);
         findViewById(R.id.logoutLayout).setOnClickListener(this);
         changePhotoLayout = (LinearLayout) findViewById(R.id.changePhotoLayout);
         imvAvatar = (ImageView) findViewById(R.id.iv_avatar);
         tvFullname = (TextView) findViewById(R.id.tv_fullname);
-        tvName = (TextView) findViewById(R.id.tv_name);
-        tvEmail = (TextView) findViewById(R.id.tv_email);
+        tvPhoneNumber = (TextView) findViewById(R.id.txt_phoneNumber);
 //        registerForContextMenu(changePhotoLayout);
     }
 
@@ -88,9 +87,6 @@ public class CurrentUserProfileActivity extends BaseActivity implements View.OnC
                 break;
             case R.id.changePhotoLayout:
                 showAlertMenu();
-                break;
-            case R.id.changePasswordLayout:
-                moveToChangePwdActivity();
                 break;
             case R.id.logoutLayout:
                 logOut();
@@ -133,28 +129,16 @@ public class CurrentUserProfileActivity extends BaseActivity implements View.OnC
     }
 
     private void getUserInfo() {
-        progressDialog.show();
-        String userID = FirebaseManager.getInstance().getCurrentUserID();
-        FirebaseManager.getInstance().getUser(userID, new FirebaseManager.OnUserResponseListener() {
-            @Override
-            public void onUserResponse(User user) {
-                progressDialog.dismiss();
-                if (user == null) {
-                    Toast.makeText(CurrentUserProfileActivity.this, "Can't get user info.", Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-
-                CurrentUserProfileActivity.this.user = user;
-                if (user.photo != null && user.photo.length() > 0) {
-                    Picasso.with(CurrentUserProfileActivity.this).load(user.photo).into(imvAvatar);
-                }
-
-                tvEmail.setText(user.email);
-                tvFullname.setText(user.username);
-                tvName.setText(user.firstname + " " + user.lastname);
-            }
-        });
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            tvPhoneNumber.setText(user.getPhoneNumber());
+            tvFullname.setText(user.getDisplayName());
+            Picasso.with(CurrentUserProfileActivity.this)
+                    .load(user.getPhotoUrl())
+                    .placeholder(R.mipmap.profile)
+                    .error(R.mipmap.profile)
+                    .into(imvAvatar);
+        }
     }
 
     public void moveToChangePwdActivity() {
@@ -275,5 +259,11 @@ editor.putString("session", "login"); editor.putString("user_email", userName)
         } else if (resultCode == Crop.RESULT_ERROR) {
             // Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void onClickBlockList(View view) {
+//        FirebaseManager.getInstance().blockUser(String.valueOf(System.currentTimeMillis()));
+        Intent intent = new Intent(CurrentUserProfileActivity.this, BlockListActivity.class);
+        startActivity(intent);
     }
 }

@@ -9,12 +9,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.crashlytics.android.Crashlytics;
 import com.dev.wangri.muslimkeyboard.R;
 import com.dev.wangri.muslimkeyboard.utility.BaseActivity;
 import com.dev.wangri.muslimkeyboard.utility.FontUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by cano-08 on 30/3/17.
@@ -30,6 +32,7 @@ public class Welcome extends BaseActivity implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_start);
         ButterKnife.bind(this);
         sharedpreferences = getSharedPreferences(HomeActivity.MyPREFERENCES, Context.MODE_PRIVATE);

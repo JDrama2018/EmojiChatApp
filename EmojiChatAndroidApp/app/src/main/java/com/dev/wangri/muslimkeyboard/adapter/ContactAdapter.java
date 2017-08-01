@@ -1,6 +1,7 @@
 package com.dev.wangri.muslimkeyboard.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,14 @@ import android.widget.TextView;
 import com.dev.wangri.muslimkeyboard.R;
 import com.dev.wangri.muslimkeyboard.bean.User;
 import com.dev.wangri.muslimkeyboard.utility.FirebaseManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactAdapter extends BaseAdapter implements SectionIndexer {
 
@@ -73,7 +77,7 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
             mFilterList.addAll(mCurrentList);
         } else {
             for (User wp : mCurrentList) {
-                if (wp.username != null && !wp.username.equals(""))
+                if (wp.username != null && !wp.username.equals("") || !TextUtils.isEmpty(wp.username))
                     if (wp.username.toLowerCase().contains(charText)) {
                         mFilterList.add(wp);
                     }
@@ -94,20 +98,26 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
 
         try {
             TextView textRow = (TextView) convertView.findViewById(R.id.tv_name);
+            CircleImageView imageView = (CircleImageView) convertView.findViewById(R.id.profile_image);
             User user = getItem(position);
-            textRow.setText(user.firstname + " " + user.lastname);
+            if (user.photo != null && user.photo.length() > 0) {
+                Picasso.with(mContext).load(user.photo).into(imageView);
+            } else {
+                imageView.setImageResource(R.mipmap.profile);
+            }
+            textRow.setText(user.username);
 
             TextView textLetter = (TextView) convertView.findViewById(R.id.tv_letter);
             textLetter.setText("");
 
             User curUser = getItem(position);
-            String curFirstLetter = curUser.firstname.toLowerCase().substring(0, 1);
+            String curFirstLetter = curUser.username.toLowerCase().substring(0, 1);
             View sectionDivider = (View) convertView.findViewById(R.id.sectionDivider);
             sectionDivider.setVisibility(View.INVISIBLE);
 
             if (position != 0) {
                 User prevUser = getItem(position - 1);
-                String prevFirstLetter = prevUser.firstname.substring(0, 1).toLowerCase();
+                String prevFirstLetter = prevUser.username.substring(0, 1).toLowerCase();
 
                 if (prevFirstLetter.equals(curFirstLetter)) {
                     textLetter.setText("");
@@ -141,7 +151,7 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
                     String text = null;
                     try {
                         User user = mFilterList.get(j);
-                        text = user.firstname + " " + user.lastname;
+                        text = user.username;
                     } catch (Exception e) {
                     }
                     if (text == null)
@@ -153,7 +163,7 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer {
                 String artist = null;
                 try {
                     User user = mFilterList.get(j);
-                    artist = user.firstname + " " + user.lastname;
+                    artist = user.username;
                 } catch (Exception e) {
                 }
                 if (artist == null)
